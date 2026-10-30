@@ -3,21 +3,24 @@
 An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cognitive Psychology** course
 (Carlson & Birkett + Cognitive Psychology syllabus). The full product vision is in [`docs/SPEC.md`](docs/SPEC.md).
 
-> **Status: early, partial build (v0.1).** The foundation works (accounts, a WebGL brain viewer with
-> selectable structures, 8 curriculum module pages, a 92-entry literature list, flashcards and a quiz),
-> but most of the spec's simulations are **not built yet**. See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the
-> exact checklist. AI agents: start with [`AGENTS.md`](AGENTS.md).
+> **Status: v0.2 — most of the spec is built.** Accounts, a WebGL atlas with real MNI152-derived meshes,
+> micro-scale and methods labs, 8 modules with interactive simulations, a mind-map, and saved spaced-repetition
+> study tools. Simulations are 2D teaching models with illustrative values. Remaining gaps (sarcomere, 3D micro
+> zoom, BOLD/DTI rendering, CI, migrations, real TLS) are listed in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> AI agents: start with [`AGENTS.md`](AGENTS.md).
 
 ## What works today
 
 | Area | State | Notes |
 |---|---|---|
 | Sign up / log in / log out | ✅ | Email + password (Auth.js v5 credentials, bcrypt, JWT sessions). All app pages require login. |
-| 3D Atlas (`/atlas`) | 🟡 | Three.js viewer: 66 structures (24 cortical areas, 37 deep/brainstem/ventricle structures, 5 lobes) placed at MNI152 coordinates as glass-shaded **ellipsoid placeholders** (not real meshes). Click to select, cortex opacity 0.05–1, stereotaxic grid, CSF (ventricles) toggle, development slider (scales the brain + stage text), 5 pathways with stage-by-stage highlighting. |
-| Curriculum modules (`/modules`, `/modules/m1..m8`) | 🟡 | 8 modules (Weeks 1–11) with goals, key concepts, structures and readings. **Text only — no per-module simulations yet.** |
+| 3D Atlas (`/atlas`) | 🟡 | Three.js viewer: 66 structures; brain surface + subcortical nuclei are real meshes (MNI152 + Harvard-Oxford, `public/meshes/brain-v1.glb`), cortical areas are still ellipsoid markers. Cortex opacity, grid, CSF (ventricles + subarachnoid shell), neural-tube → adult development scrubber, 5 pathways with particle streams, `?s=<id>` deep links. No true SSS. |
+| Micro-scale lab (`/micro`) | 🟡 | Hodgkin–Huxley AP simulator, conduction, neuron/glia explorer, synapse + drug simulator, LTP steps. 2D SVG, not a 3D zoom. |
+| Methods lab (`/methods`) | 🟡 | Radar comparison, EEG 10-20 + rhythms, ERPs (N400/P600), tuning curve, RT mini-lab (Donders, Posner), fMRI/DTI/TMS/DBS/lesion cards. No BOLD/DTI rendering. |
+| Curriculum modules (`/modules`, `/modules/m1..m8`) | ✅ | 8 modules with goals, concepts, structures, readings, saved "Mark complete" and interactive simulations (e.g. basal-ganglia PD/HD/DBS model, VLPO flip-flop, aphasia classifier, DRM, IGT). Sarcomere not built. |
+| Mind-map (`/mindmap`) | ✅ | Force-directed concept graph (2D). |
 | Literature (`/literature`) | ✅ | 92 citations with DOI links, grouped by week. DOIs were not individually re-verified. |
-| Study tools (`/study`) | 🟡 | Partial/Final scope toggle, 80 flashcards (self-grade buttons just advance, no spaced repetition yet), 62-question quiz with instant feedback and score. Nothing is saved to the database yet. |
-| Micro-scale (neurons, synapses, LTP), neuroimaging lab, illusions, mind-map | ⬜ | Not started (data for methods and the concept graph exists in `lib/data`). |
+| Study tools (`/study`) | ✅ | App-wide Partial/Final scope, SM-2 flashcards and quiz attempts saved per user, per-goal tracker, 3D structure focus. |
 
 ## Tech stack
 
