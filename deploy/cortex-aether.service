@@ -1,0 +1,19 @@
+# systemd unit for CORTEX-AETHER (installed by deploy/deploy.sh to /etc/systemd/system/)
+[Unit]
+Description=CORTEX-AETHER 3D Neuro-Atlas (Next.js on 127.0.0.1:3100)
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=cortex
+Group=cortex
+WorkingDirectory=/opt/cortex-aether
+EnvironmentFile=/opt/cortex-aether/.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/env node node_modules/next/dist/bin/next start -p 3100 -H 127.0.0.1
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
