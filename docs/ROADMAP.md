@@ -18,7 +18,8 @@ quantitative neuroscience models, unless stated otherwise.
 - 🟡 Tier 1 macro: 66 selectable structures at MNI coordinates with descriptions/functions/clinical notes/citations.
   Brain surface and subcortical nuclei are real meshes built from MNI152 + Harvard-Oxford (`scripts/build_meshes.py`
   → `public/meshes/brain-v1.glb`); cortical areas and small brainstem nuclei are still ellipsoid markers.
-- ⬜ Muscle-fibre / sarcomere anatomy.
+- 🟡 Muscle-fibre / sarcomere anatomy — 2D sliding-filament lab on `/modules/m4` (cross-bridge cycle,
+  length–tension, twitch summation/tetanus); no 3D fibre model.
 - ✅ Meso pathways (visual, BG motor, language, semantic hub, sleep replay) with animated particle streams and
   stage-by-stage highlighting; deep links `/atlas?s=<structureId>`.
 - 🟡 Tier 2 micro-scale (`/micro`, linked from the atlas): **separate 2D SVG lab, not a 3D camera zoom**.
@@ -46,8 +47,8 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 - ✅ M1 history timeline, levels of analysis; links to AP simulator and methods matrix.
 - ✅ M2 top-down context (B/13), agnosias (prosopagnosia, akinetopsia, …), Thatcher illusion, mental rotation.
 - ✅ M3 illusions (Müller-Lyer, Ponzo, Kanizsa, lightness), ventral/dorsal stream chain, centre–surround RF.
-- 🟡 M4 direct/indirect basal ganglia rate model with normal/PD/HD/L-DOPA/DBS; neglect line bisection +
-  cancellation. **Sarcomere not built.**
+- ✅ M4 direct/indirect basal-ganglia rate model with normal/PD/HD/L-DOPA/DBS; neglect line bisection +
+  cancellation; sliding-filament sarcomere lab (cross-bridge cycle, length–tension, tetanus).
 - ✅ M5 aphasia classifier (fluency/comprehension/repetition → 8 syndromes), word-superiority flash task;
   N400/P600 in `/methods#erp`.
 - ✅ M6 memory systems + H.M., DRM false memory, dopamine RPE raster, encoding specificity (Godden–Baddeley).
@@ -80,7 +81,10 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 
 ## Next candidates
 
-1. Sarcomere / muscle-fibre model (M4) and a 3D camera zoom into the micro scene.
+1. 3D camera zoom into the micro scene.
 2. BOLD cluster overlays and DTI fibre bundles in the viewer.
 3. Scripted DOI verification; unit tests for `lib/sm2.ts` and `lib/force-layout.ts`; CI.
 4. Prisma migrations and a real TLS certificate.
+5. Atlas visual-quality pass — real cortical-area meshes (Harvard-Oxford cortical) + materials/lighting
+   overhaul to meet the owner's bar: as detailed as and more beautiful than
+   <https://neurotorium.org/tool/brain-atlas/> (see AGENTS.md).

@@ -5,7 +5,7 @@ An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cog
 
 > **Status: v0.2 — most of the spec is built.** Accounts, a WebGL atlas with real MNI152-derived meshes,
 > micro-scale and methods labs, 8 modules with interactive simulations, a mind-map, and saved spaced-repetition
-> study tools. Simulations are 2D teaching models with illustrative values. Remaining gaps (sarcomere, 3D micro
+> study tools. Simulations are 2D teaching models with illustrative values. Remaining gaps (3D micro
 > zoom, BOLD/DTI rendering, CI, migrations, real TLS) are listed in [`docs/ROADMAP.md`](docs/ROADMAP.md).
 > AI agents: start with [`AGENTS.md`](AGENTS.md).
 
@@ -17,7 +17,7 @@ An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cog
 | 3D Atlas (`/atlas`) | 🟡 | Three.js viewer: 66 structures; brain surface + subcortical nuclei are real meshes (MNI152 + Harvard-Oxford, `public/meshes/brain-v1.glb`), cortical areas are still ellipsoid markers. Cortex opacity, grid, CSF (ventricles + subarachnoid shell), neural-tube → adult development scrubber, 5 pathways with particle streams, `?s=<id>` deep links. No true SSS. |
 | Micro-scale lab (`/micro`) | 🟡 | Hodgkin–Huxley AP simulator, conduction, neuron/glia explorer, synapse + drug simulator, LTP steps. 2D SVG, not a 3D zoom. |
 | Methods lab (`/methods`) | 🟡 | Radar comparison, EEG 10-20 + rhythms, ERPs (N400/P600), tuning curve, RT mini-lab (Donders, Posner), fMRI/DTI/TMS/DBS/lesion cards. No BOLD/DTI rendering. |
-| Curriculum modules (`/modules`, `/modules/m1..m8`) | ✅ | 8 modules with goals, concepts, structures, readings, saved "Mark complete" and interactive simulations (e.g. basal-ganglia PD/HD/DBS model, VLPO flip-flop, aphasia classifier, DRM, IGT). Sarcomere not built. |
+| Curriculum modules (`/modules`, `/modules/m1..m8`) | ✅ | 8 modules with goals, concepts, structures, readings, saved "Mark complete" and interactive simulations (e.g. basal-ganglia PD/HD/DBS model, VLPO flip-flop, aphasia classifier, DRM, IGT, sliding-filament sarcomere lab). |
 | Mind-map (`/mindmap`) | ✅ | Force-directed concept graph (2D). |
 | Literature (`/literature`) | ✅ | 92 citations with DOI links, grouped by week. DOIs were not individually re-verified. |
 | Study tools (`/study`) | ✅ | App-wide Partial/Final scope, SM-2 flashcards and quiz attempts saved per user, per-goal tracker, 3D structure focus. |

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { FlaskConical } from 'lucide-react';
 import { M1History, M1Levels, M2Context, M2Agnosia, M2Thatcher, M2Rotation } from './m1-m2';
 import { M3Illusions, M3Streams, M3Receptive, M4BasalGanglia, M4Neglect } from './m3-m4';
+import { M4Sarcomere } from './m4-sarcomere';
 import { M5Aphasia, M5WordSuperiority, M6Systems, M6Drm, M6Rpe, M6Context } from './m5-m6';
 import { M7Hpa, M7Reconsolidation, M7Igt, M8Hypnogram, M8FlipFlop, M8Clock, M8Disorders } from './m7-m8';
 
@@ -10,7 +11,7 @@ const SIMS: Record<string, ComponentType[]> = {
   m1: [M1History, M1Levels],
   m2: [M2Context, M2Agnosia, M2Thatcher, M2Rotation],
   m3: [M3Illusions, M3Streams, M3Receptive],
-  m4: [M4BasalGanglia, M4Neglect],
+  m4: [M4BasalGanglia, M4Neglect, M4Sarcomere],
   m5: [M5Aphasia, M5WordSuperiority],
   m6: [M6Systems, M6Drm, M6Rpe, M6Context],
   m7: [M7Hpa, M7Reconsolidation, M7Igt],
