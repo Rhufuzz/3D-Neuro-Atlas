@@ -6,10 +6,10 @@ The product vision is `docs/SPEC.md`; treat it as the source of truth for featur
 ## Project in one paragraph
 
 CORTEX-AETHER is a logged-in web app for students of an 11-week Biological & Cognitive Psychology course.
-Today it has auth, a Three.js brain viewer with 66 selectable structures (ellipsoid placeholders at MNI152
-coordinates), 8 text-based curriculum module pages, a literature list (92 DOIs), and a flashcard + quiz page.
-Most of the spec (micro-scale cell/synapse lab, neuroimaging simulators, per-module simulations, mind-map,
-spaced repetition, saved progress, real anatomical meshes) is still to be built.
+Today it has auth, a Three.js atlas (66 structures, real MNI152/Harvard-Oxford meshes for surface + subcortex,
+pathway particle streams, development morphing), a micro-scale lab (`/micro`), a methods lab (`/methods`),
+8 modules with interactive 2D simulations (`components/modules/*`), a mind-map, a literature list (92 DOIs) and
+study tools with SM-2 + saved progress. Remaining gaps are in `docs/ROADMAP.md`.
 
 ## Origin
 
@@ -58,12 +58,14 @@ There are no unit tests yet. For UI work, log in at `/signup` and click through 
 |---|---|
 | New 3D behaviour (particles along pathways, meshes, CSF shader) | `components/atlas/brain-viewer.tsx` (consider splitting into `components/atlas/*`) |
 | Atlas controls / side panels | `app/(app)/atlas/atlas-client.tsx` |
-| Micro-scale lab (§3 Tier 2) | new route `app/(app)/micro/` + `components/micro/*` |
-| Neuroimaging lab (§4) | new route `app/(app)/methods/` using `METHODS` in `lib/data/methods.ts` |
-| Per-module simulations (§5) | `app/(app)/modules/[id]/page.tsx` renders a simulation component chosen by module id |
-| Mind-map (§7.2) | new component reading `CONCEPT_NODES` / `CONCEPT_EDGES` from `lib/data/concept-graph.ts` |
-| Exam scope everywhere (§7.1) | `lib/store.ts` already has `useStudyStore`, `inScope()`, `maxWeekFor()` — wire it into nav + pages |
-| Spaced repetition + saved progress (§7.3) | API routes under `app/api/` using the existing Prisma models `FlashcardProgress` (SM-2 fields ready), `QuizAttempt`, `ModuleProgress` |
+| Micro-scale lab (§3 Tier 2) | `app/(app)/micro/*` (sections listed in its `page.tsx`), data in `lib/data/micro.ts` |
+| Neuroimaging lab (§4) | `app/(app)/methods/*`, data in `lib/data/methods.ts` + `lib/data/methods-lab.ts` |
+| Per-module simulations (§5) | components in `components/modules/m*-m*.tsx` (shared UI in `sim-ui.tsx`), registered per module id in `components/modules/module-sim.tsx` |
+| Citations in a UI panel | `components/cite-chips.tsx` with citation ids from `lib/data/citations.ts` |
+| Mind-map (§7.2) | `app/(app)/mindmap/*` + `lib/force-layout.ts` |
+| Exam scope (§7.1) | `lib/use-scope.ts`, `components/scope-toggle.tsx`, `components/scope-gate.tsx` |
+| Saved progress (§7.3) | `app/api/progress/{flashcards,quiz,modules}` + `lib/sm2.ts` |
+| Anatomical meshes | `scripts/build_meshes.py` (Python: nibabel, nilearn, scikit-image, trimesh) → `public/meshes/brain-v1.glb` |
 
 ## Deployment
 
