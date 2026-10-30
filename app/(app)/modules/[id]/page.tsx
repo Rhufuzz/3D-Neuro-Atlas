@@ -3,6 +3,8 @@ import { Target, Lightbulb, Brain, Library } from 'lucide-react';
 import { getModule } from '@/lib/data/curriculum';
 import { getStructure } from '@/lib/data/structures';
 import { getCitation } from '@/lib/data/citations';
+import ModuleSim from '@/components/modules/module-sim';
+import ModuleCompleteButton from '@/components/modules/module-complete-button';
 
 export default async function ModulePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -14,6 +16,7 @@ export default async function ModulePage({ params }: { params: Promise<{ id: str
         <p className="text-sm" style={{ color: m.color }}>Module {m.number} · {m.weekLabel}</p>
         <h1 className="text-2xl font-bold">{m.title}</h1>
         <p className="text-muted-foreground">{m.tagline}</p>
+        <div className="mt-3"><ModuleCompleteButton moduleId={m.id} /></div>
       </div>
       <section className="panel p-4 rounded-lg">
         <h2 className="font-semibold flex items-center gap-2 mb-2"><Target className="h-4 w-4 text-primary" />Learning goals</h2>
@@ -27,6 +30,7 @@ export default async function ModulePage({ params }: { params: Promise<{ id: str
           </div>
         ))}
       </section>
+      <ModuleSim id={m.id} />
       <section className="panel p-4 rounded-lg">
         <h2 className="font-semibold flex items-center gap-2 mb-2"><Brain className="h-4 w-4 text-primary" />Key structures</h2>
         <div className="flex flex-wrap gap-2">{m.structures.map((s: string) => <span key={s} className="text-xs bg-muted px-2 py-1 rounded">{getStructure(s)?.name ?? s}</span>)}</div>
