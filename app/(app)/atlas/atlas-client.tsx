@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Brain, Grid3x3, Droplets, Layers, X } from 'lucide-react';
+import Link from 'next/link';
+import { Brain, Grid3x3, Droplets, Layers, X, Microscope } from 'lucide-react';
+import { useScope } from '@/lib/use-scope';
+import type { StreamSpec } from '@/components/atlas/brain-viewer';
 import { ATLAS_SECTIONS, structuresInSection, getStructure, formatMni } from '@/lib/data/structures';
 import type { GroupInfo } from '@/lib/data/structures';
 import { getCitation } from '@/lib/data/citations';
@@ -12,28 +15,31 @@ import type { BrainStructure, Pathway, PathwayStage } from '@/lib/data/types';
 
 const BrainViewer = dynamic(() => import('@/components/atlas/brain-viewer'), { ssr: false, loading: () => <div className="h-[60vh] grid place-items-center text-muted-foreground">Loading 3D atlas…</div> });
 
-export default function AtlasClient() {
+export default function AtlasClient({ initial = null }: { initial?: string | null }) {
+  const { isIn, scope } = useScope();
   const [opacity, setOpacity] = useState(0.3);
   const [grid, setGrid] = useState(true);
   const [csf, setCsf] = useState(true);
   const [dev, setDev] = useState(1);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(initial);
   const [pathway, setPathway] = useState<string>('');
   const [stage, setStage] = useState(0);
   const s = getStructure(selected);
   const pw = PATHWAYS.find((p: Pathway) => p.id === pathway);
   const st: PathwayStage | undefined = pw?.stages?.[stage];
   const ds = devStageAt(dev);
+  const streams = useMemo<StreamSpec[]>(() => (st && pw ? [{ paths: st.paths ?? [], color: st.color ?? pw.color, bilateral: st.bilateral }] : []), [st, pw]);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[260px_1fr_320px]">
       <aside className="panel p-3 max-h-[calc(100vh-8rem)] overflow-y-auto space-y-3">
         <h2 className="font-semibold flex items-center gap-2"><Layers className="h-4 w-4 text-primary" />Structures</h2>
-        {ATLAS_SECTIONS.map((sec: GroupInfo) => (
+        <p className="text-[11px] text-muted-foreground">Showing structures taught in {scope === 'partial' ? 'Weeks 1–7 (Partial)' : 'Weeks 1–11 (Final)'}.</p>
+        {ATLAS_SECTIONS.map((sec: GroupInfo) => ({ sec, items: structuresInSection(sec).filter((x: BrainStructure) => isIn(x.weeks)) })).filter((g) => g.items.length > 0).map(({ sec, items }) => (
           <div key={sec.id}>
             <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">{sec.label}</p>
             <div className="flex flex-wrap gap-1">
-              {structuresInSection(sec).map((x: BrainStructure) => (
+              {items.map((x: BrainStructure) => (
                 <button key={x.id} onClick={() => setSelected(x.id)} className={`text-xs px-2 py-1 rounded-md transition ${selected === x.id ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/70'}`}>{x.abbr ?? x.name}</button>
               ))}
             </div>
@@ -41,7 +47,8 @@ export default function AtlasClient() {
         ))}
       </aside>
       <section className="panel p-2 relative">
-        <BrainViewer opacity={opacity} showGrid={grid} showCsf={csf} showDeep dev={dev} selected={selected} highlight={st?.highlight ?? []} onSelect={setSelected} />
+        <BrainViewer opacity={opacity} showGrid={grid} showCsf={csf} showDeep dev={dev} selected={selected} highlight={st?.highlight ?? []} streams={streams} onSelect={setSelected} />
+        <Link href="/micro" className="absolute right-3 top-3 glass-panel px-3 py-2 rounded-lg text-xs flex items-center gap-1.5 hover:text-primary"><Microscope className="h-3.5 w-3.5 text-primary" />Zoom to Micro-Scale</Link>
         <div className="absolute left-3 top-3 glass-panel p-3 rounded-lg space-y-2 text-xs w-60">
           <label className="block">X-ray cortical opacity: {opacity.toFixed(2)}<input aria-label="Cortical opacity" type="range" min={0.05} max={1} step={0.01} value={opacity} onChange={(e) => setOpacity(parseFloat(e.target.value))} className="range-neuro w-full" /></label>
           <label className="block">Development: {ds?.label} ({ds?.age})<input aria-label="Development" type="range" min={0} max={1} step={0.01} value={dev} onChange={(e) => setDev(parseFloat(e.target.value))} className="range-neuro w-full" /></label>
