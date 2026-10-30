@@ -1,77 +1,86 @@
 # Roadmap — spec coverage checklist
 
-Legend: ✅ done and working · 🟡 partial / placeholder · ⬜ not started. Section numbers refer to `docs/SPEC.md`.
-Update this file whenever a feature lands.
+Legend: ✅ done and working · 🟡 partial / simplified · ⬜ not started. Section numbers refer to `docs/SPEC.md`.
+Update this file whenever a feature lands. Simulations are **teaching models with illustrative values**, not
+quantitative neuroscience models, unless stated otherwise.
 
 ## §2 Visual direction
 
-- 🟡 Obsidian `#05070B` canvas, glass/fresnel/iridescent materials — done as a custom shader; **no real subsurface scattering**.
+- 🟡 Obsidian `#05070B` canvas, glass/fresnel materials — custom shader; **no true subsurface scattering**.
 - ✅ Toggleable stereotaxic grid.
 - ✅ X-ray cortical opacity slider 0.05–1.0.
-- 🟡 CSF layer — toggle shows glowing ventricle ellipsoids (lateral, 3rd, 4th, aqueduct, central canal); **no fluid shader, no subarachnoid space**.
-- 🟡 Neural development scrubber — slider scales the brain and shows stage text (6 stages); **no neural-tube → vesicle → adult morphing**.
+- 🟡 CSF layer — ventricle system + subarachnoid shell; **no CSF flow/fluid simulation**.
+- ✅ Neural development scrubber — neural tube → 3 primary → 5 secondary vesicles (with flexures) → smoothed
+  lissencephalic brain → adult folded surface.
 
 ## §3 Multi-scale anatomy
 
-- 🟡 Tier 1 macro: 66 selectable structures at MNI coordinates with descriptions/functions/clinical notes/citations — **ellipsoid placeholders, not anatomically accurate meshes**. Muscle-fibre anatomy ⬜.
-- 🟡 Meso pathways: visual, basal-ganglia motor, language, hub-and-spoke semantic, sleep replay — stage-by-stage text + structure highlighting; **particle streams along `paths` not rendered**.
-- ⬜ Tier 2 micro-scale zoom (camera transition into a cellular scene).
-- ⬜ Neuron types + glial cells 3D models (Week 2).
-- ⬜ Membrane & action-potential simulator (−70 mV, Na⁺/K⁺ pump, channels, refractory period, saltatory conduction).
-- ⬜ Synaptic transmission 3D + neurotransmitter/neuromodulator comparison (Week 3).
-- ⬜ Pharmacology & drug simulator (SSRIs, L-DOPA, benzodiazepines, cocaine, amphetamines, botulinum, curare/atropine).
-- ⬜ LTP module (NMDA Mg²⁺ block, Ca²⁺, CaMKII, AMPA insertion, retrograde NO) (Week 9).
+- 🟡 Tier 1 macro: 66 selectable structures at MNI coordinates with descriptions/functions/clinical notes/citations.
+  Brain surface and subcortical nuclei are real meshes built from MNI152 + Harvard-Oxford (`scripts/build_meshes.py`
+  → `public/meshes/brain-v1.glb`); cortical areas and small brainstem nuclei are still ellipsoid markers.
+- ⬜ Muscle-fibre / sarcomere anatomy.
+- ✅ Meso pathways (visual, BG motor, language, semantic hub, sleep replay) with animated particle streams and
+  stage-by-stage highlighting; deep links `/atlas?s=<structureId>`.
+- 🟡 Tier 2 micro-scale (`/micro`, linked from the atlas): **separate 2D SVG lab, not a 3D camera zoom**.
+- 🟡 Neuron types + glial cells — 2D explorer (`/micro#cells`).
+- ✅ Action-potential simulator — Hodgkin–Huxley integration, resting −70 mV, Na⁺/K⁺ gating, refractory period,
+  TTX block, plus saltatory vs continuous conduction panel.
+- 🟡 Synaptic transmission + drugs (SSRIs, L-DOPA, benzodiazepines, cocaine, amphetamine, botulinum, curare,
+  atropine) — 2D SVG, illustrative values.
+- ✅ LTP step-through (Mg²⁺ block, Ca²⁺, CaMKII, AMPA insertion, retrograde NO).
 
-## §4 Neuroimaging & methods lab
+## §4 Neuroimaging & methods lab (`/methods`)
 
-- 🟡 Data only: 7 methods with pros/cons in `lib/data/methods.ts` (not shown in the UI).
-- ⬜ fMRI BOLD clusters / DMN / task contrasts.
-- ⬜ EEG 10-20 array, sleep rhythms, ERPs (N400/P600).
-- ⬜ DTI tractography fibre bundles.
-- ⬜ Single-cell (orientation tuning), TMS virtual lesion, lesion case studies (H.M., Gage, Tan, neglect), DBS targeting.
-- ⬜ Reaction-time mini-lab (Donders subtraction, Posner cueing).
-- ⬜ Method comparison radar charts.
+- ✅ Method comparison radar charts (spatial/temporal resolution, invasiveness, …).
+- ✅ EEG 10-20 array with sleep rhythms; ERP panel (N400/P600).
+- 🟡 fMRI/DTI/TMS/DBS/lesion — cards + 3D highlighting in the viewer; **no BOLD cluster rendering or real
+  tractography fibres**.
+- ✅ Single-cell orientation tuning curve.
+- ✅ Reaction-time mini-lab (Donders subtraction, Posner cueing) — runs in the browser.
 
 ## §5 Curriculum modules (Weeks 1–11)
 
-- 🟡 All 8 modules exist as pages with goals, key concepts, related structures and readings (m1–m8).
-- ⬜ M1 history timeline + AP simulator + methods matrix.
-- ⬜ M2 bottom-up vs top-down flow, perception vs imagery, FFA lesions (prosopagnosia, agnosia, akinetopsia).
-- ⬜ M3 full retina → LGN → V1 → ventral/dorsal trace; illusions viewer (Müller-Lyer, Kanizsa, Ponzo, checker-shadow).
-- ⬜ M4 motor chain + sarcomere, direct/indirect BG pathways, Parkinson's/Huntington's/DBS toggle, attention networks & neglect.
-- ⬜ M5 language pathways, aphasia/dyslexia simulator, IAM word-superiority explorer, phoneme restoration, N400/P600.
-- ⬜ M6 memory systems, VTA→NAcc reward circuit, hub-and-spoke, encoding specificity, familiarity vs recollection, DRM.
-- ⬜ M7 emotion/stress/HPA/empathy circuits, consolidation + sleep replay animation, interference/RIF/reconsolidation.
-- ⬜ M8 sleep stage EEG scrubber, VLPO flip-flop switch, SCN/melatonin clock, sleep disorders inspector.
+Each module page has goals/concepts/structures/readings, a **Mark complete** button (saved per user) and an
+"Interactive simulations" grid (`components/modules/*`). All are 2D SVG/HTML models.
+
+- ✅ M1 history timeline, levels of analysis; links to AP simulator and methods matrix.
+- ✅ M2 top-down context (B/13), agnosias (prosopagnosia, akinetopsia, …), Thatcher illusion, mental rotation.
+- ✅ M3 illusions (Müller-Lyer, Ponzo, Kanizsa, lightness), ventral/dorsal stream chain, centre–surround RF.
+- 🟡 M4 direct/indirect basal ganglia rate model with normal/PD/HD/L-DOPA/DBS; neglect line bisection +
+  cancellation. **Sarcomere not built.**
+- ✅ M5 aphasia classifier (fluency/comprehension/repetition → 8 syndromes), word-superiority flash task;
+  N400/P600 in `/methods#erp`.
+- ✅ M6 memory systems + H.M., DRM false memory, dopamine RPE raster, encoding specificity (Godden–Baddeley).
+- ✅ M7 HPA axis stepper (acute vs chronic), reconsolidation (Nader), Iowa Gambling Task.
+- ✅ M8 hypnogram + per-stage EEG, VLPO flip-flop (two-process model, orexin on/off), SCN/melatonin clock with
+  screen-light toggle, sleep disorders inspector.
 
 ## §6 Literature database
 
-- ✅ 92 citations (≥ 40 required) with `https://doi.org/` links, mapped to weeks and topics, linked from atlas and modules.
-- 🟡 DOIs have not been individually re-verified against doi.org — worth a scripted check.
+- ✅ 92 citations (≥ 40 required) with `https://doi.org/` links, mapped to weeks/topics, cited from atlas, labs and
+  module simulations (citation chips).
+- 🟡 DOIs have not been individually re-verified against doi.org.
 
 ## §7 Study HUD
 
-- 🟡 Exam scope filter — toggle exists on `/study` only (local state). `lib/store.ts` is ready for an app-wide filter (nav, atlas, modules, literature).
-- ⬜ "Bigger picture" force-directed mind-map (data ready: 55 nodes / 77 edges in `lib/data/concept-graph.ts`).
-- 🟡 Flashcards — 80 text cards with flip + self-grade; **no SM-2 scheduling, no persistence, not 3D/spatial** (should hide labels / highlight structures in the viewer).
-- 🟡 Practice quiz — 62 MCQs with instant feedback + score; **no per-goal tracker, no saved attempts, no camera rotation to the relevant circuit**.
+- ✅ App-wide exam scope toggle (Partial = Weeks 1–7 / Final = 1–11) in the nav; filters atlas, modules,
+  mind-map, study items and literature.
+- ✅ "Bigger picture" force-directed mind-map (`/mindmap`, 2D).
+- ✅ Flashcards with SM-2 scheduling saved per user; cards with a structure hide the label and highlight it in 3D.
+- ✅ Practice quiz with saved attempts, per-goal tracker and 3D focus on the relevant structure.
 
 ## Platform / engineering
 
 - ✅ Auth (sign up, log in, log out, protected routes).
+- ✅ API routes `/api/progress/{flashcards,quiz,modules}` (401 when signed out).
 - ✅ VPS deployment scripts (systemd + nginx + PostgreSQL), update script.
-- ⬜ API routes for `FlashcardProgress`, `QuizAttempt`, `ModuleProgress`.
 - ⬜ Automated tests beyond `scripts/auth-smoke.mjs`; CI.
 - ⬜ Prisma migrations (currently `db push`).
-- ⬜ Real TLS certificate / domain (currently self-signed on port 8445).
+- ⬜ Real TLS certificate / domain (currently self-signed).
 
-## Suggested build order
+## Next candidates
 
-1. **Persist study progress**: API routes + SM-2 for flashcards, saved quiz attempts, module completion.
-2. **App-wide exam scope** using `lib/store.ts` (nav toggle; filter modules, cards, quiz, literature, atlas list).
-3. **Pathway particle streams** in the viewer (render `PathwayStage.paths` as animated flows) and quiz → camera focus.
-4. **Mind-map** from the concept graph (2D force layout first, 3D later).
-5. **Methods lab** with radar charts from `METHODS`, then EEG/ERP and RT mini-lab (cheap, high exam value).
-6. **Per-module simulations**, starting with M4 basal ganglia (direct/indirect + PD/HD/DBS) and M8 flip-flop switch.
-7. **Micro-scale lab**: action-potential simulator first (2D/1D plot is fine), then synapse + drugs, then LTP.
-8. **Anatomical meshes** (e.g. open-licensed brain surface/subcortical meshes as glTF) to replace ellipsoids; CSF shader; neural-tube morphing.
+1. Sarcomere / muscle-fibre model (M4) and a 3D camera zoom into the micro scene.
+2. BOLD cluster overlays and DTI fibre bundles in the viewer.
+3. Scripted DOI verification; unit tests for `lib/sm2.ts` and `lib/force-layout.ts`; CI.
+4. Prisma migrations and a real TLS certificate.
