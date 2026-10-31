@@ -22,7 +22,9 @@ quantitative neuroscience models, unless stated otherwise.
   length–tension, twitch summation/tetanus); no 3D fibre model.
 - ✅ Meso pathways (visual, BG motor, language, semantic hub, sleep replay) with animated particle streams and
   stage-by-stage highlighting; deep links `/atlas?s=<structureId>`.
-- 🟡 Tier 2 micro-scale (`/micro`, linked from the atlas): **separate 2D SVG lab, not a 3D camera zoom**.
+- 🟡 Tier 2 micro-scale (`/micro`, linked from the atlas): 3D zoom-through-scales scene
+  (brain → neuron → synapse → ion channel) plus the original 2D labs; not yet a seamless zoom
+  out of the atlas camera.
 - 🟡 Neuron types + glial cells — 2D explorer (`/micro#cells`).
 - ✅ Action-potential simulator — Hodgkin–Huxley integration, resting −70 mV, Na⁺/K⁺ gating, refractory period,
   TTX block, plus saltatory vs continuous conduction panel.
@@ -81,8 +83,8 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 
 ## Next candidates
 
-1. 3D camera zoom into the micro scene.
-2. BOLD cluster overlays and DTI fibre bundles in the viewer.
+1. BOLD cluster overlays and DTI fibre bundles in the viewer.
+2. Seamless zoom from the atlas camera straight into the micro-scale scene (currently a separate scene on `/micro#zoom`).
 3. Scripted DOI verification; unit tests for `lib/sm2.ts` and `lib/force-layout.ts`; CI.
 4. Prisma migrations and a real TLS certificate.
 5. Atlas visual-quality pass — real cortical-area meshes (Harvard-Oxford cortical) + materials/lighting

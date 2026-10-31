@@ -1,13 +1,26 @@
+'use client';
+
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { Zap, Cable, Microscope, FlaskConical, Sparkles, ArrowLeft } from 'lucide-react';
+import { Zap, Cable, Microscope, FlaskConical, Sparkles, ArrowLeft, Orbit } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import HhSim from './hh-sim';
 import Conduction from './conduction';
 import CellExplorer from './cell-explorer';
 import SynapseSim from './synapse-sim';
 import LtpSteps from './ltp-steps';
 
+const ZoomScene = dynamic(() => import('./zoom-scene'), {
+  ssr: false,
+  loading: () => <div className="h-[420px] grid place-items-center text-muted-foreground text-sm">Loading zoom scene…</div>,
+});
+
 const SECTIONS: { id: string; title: string; icon: ReactNode; blurb: string; body: ReactNode }[] = [
+  {
+    id: 'zoom', title: 'Zoom through scales', icon: <Orbit className="h-4 w-4" />,
+    blurb: 'A continuous 3D dive from the whole brain down to single ion channels — scroll (or drag the slider) to move between scales. Metaphor, not measurement: the quantitative models are the sections below.',
+    body: <ZoomScene />,
+  },
   { id: 'cells', title: 'Neurons & glia', icon: <Microscope className="h-4 w-4" />, blurb: 'The cast of cells that make up the tissue you saw in the atlas — and what each one does.', body: <CellExplorer /> },
   { id: 'action-potential', title: 'Action potential (Hodgkin–Huxley)', icon: <Zap className="h-4 w-4" />, blurb: 'Inject current into a simulated squid axon membrane and watch Na⁺ and K⁺ gates produce an all-or-none spike, refractoriness and rate coding.', body: <HhSim /> },
   { id: 'conduction', title: 'Conduction & myelin', icon: <Cable className="h-4 w-4" />, blurb: 'Continuous vs saltatory propagation, and what demyelination does to it.', body: <Conduction /> },

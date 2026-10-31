@@ -15,7 +15,7 @@ An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cog
 |---|---|---|
 | Sign up / log in / log out | ✅ | Email + password (Auth.js v5 credentials, bcrypt, JWT sessions). All app pages require login. |
 | 3D Atlas (`/atlas`) | 🟡 | Three.js viewer: 66 structures; brain surface + subcortical nuclei are real meshes (MNI152 + Harvard-Oxford, `public/meshes/brain-v1.glb`), cortical areas are still ellipsoid markers. Cortex opacity, grid, CSF (ventricles + subarachnoid shell), neural-tube → adult development scrubber, 5 pathways with particle streams, `?s=<id>` deep links. No true SSS. |
-| Micro-scale lab (`/micro`) | 🟡 | Hodgkin–Huxley AP simulator, conduction, neuron/glia explorer, synapse + drug simulator, LTP steps. 2D SVG, not a 3D zoom. |
+| Micro-scale lab (`/micro`) | ✅ | 3D zoom-through-scales scene (brain → neuron → synapse → ion channel, scroll-driven), Hodgkin–Huxley AP simulator, conduction, neuron/glia explorer, synapse + drug simulator, LTP steps. |
 | Methods lab (`/methods`) | 🟡 | Radar comparison, EEG 10-20 + rhythms, ERPs (N400/P600), tuning curve, RT mini-lab (Donders, Posner), fMRI/DTI/TMS/DBS/lesion cards. No BOLD/DTI rendering. |
 | Curriculum modules (`/modules`, `/modules/m1..m8`) | ✅ | 8 modules with goals, concepts, structures, readings, saved "Mark complete" and interactive simulations (e.g. basal-ganglia PD/HD/DBS model, VLPO flip-flop, aphasia classifier, DRM, IGT, sliding-filament sarcomere lab). |
 | Mind-map (`/mindmap`) | ✅ | Force-directed concept graph (2D). |
