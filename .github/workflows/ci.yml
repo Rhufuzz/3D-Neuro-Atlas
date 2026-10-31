@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --no-audit --no-fund --legacy-peer-deps
+      - name: Typecheck (production build skips type errors, so this is the gate)
+        run: npm run typecheck
+      - name: Unit tests (SM-2, force layout)
+        run: npm test
+      - name: Build
+        run: npm run build
+        env:
+          # build needs a secret-shaped env; values are dummies (no DB touched at build time)
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+          AUTH_SECRET: ci-dummy-secret
+      - name: DOI spot check (report only)
+        run: npm run checkdois | tail -3
+        continue-on-error: true

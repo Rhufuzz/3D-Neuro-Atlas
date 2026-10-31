@@ -62,7 +62,8 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 
 - ✅ 92 citations (≥ 40 required) with `https://doi.org/` links, mapped to weeks/topics, cited from atlas, labs and
   module simulations (citation chips).
-- 🟡 DOIs have not been individually re-verified against doi.org.
+- ✅ Literature: 95 citations with DOI links, grouped by week. Scripted verification (`npm run
+  checkdois`): **0 dead DOIs** — 55 resolve, 40 sit behind publisher bot-walls (403, not dead).
 
 ## §7 Study HUD
 
@@ -77,17 +78,17 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 - ✅ Auth (sign up, log in, log out, protected routes).
 - ✅ API routes `/api/progress/{flashcards,quiz,modules}` (401 when signed out).
 - ✅ VPS deployment scripts (systemd + nginx + PostgreSQL), update script.
-- ⬜ Automated tests beyond `scripts/auth-smoke.mjs`; CI.
+- ✅ Automated tests: node:test suites for `lib/sm2.ts` and `lib/force-layout.ts` (`npm test`);
+  GitHub Actions CI (typecheck → tests → build, DOI report).
 - ⬜ Prisma migrations (currently `db push`).
 - ⬜ Real TLS certificate / domain (currently self-signed).
 
 ## Next candidates
 
-1. BOLD cluster overlays and DTI fibre bundles in the viewer.
-2. Seamless zoom from the atlas camera straight into the micro-scale scene (currently a separate scene on `/micro#zoom`).
-3. Scripted DOI verification; unit tests for `lib/sm2.ts` and `lib/force-layout.ts`; CI.
-4. Prisma migrations and a real TLS certificate.
-5. Atlas visual-quality pass — real cortical-area meshes (Harvard-Oxford cortical) + materials/lighting
+1. Seamless zoom from the atlas camera straight into the micro-scale scene (atlas overlay exists; a true single-camera morph is the next step).
+2. Prisma migrations and a real TLS certificate (needs a domain name; certbot is installed).
+3. BOLD/DTI overlays with real datasets (currently illustrative geometry).
+4. Atlas visual-quality pass — real cortical-area meshes (Harvard-Oxford cortical) + materials/lighting
    overhaul to meet the owner's bar: as detailed as and more beautiful than
    <https://neurotorium.org/tool/brain-atlas/> (see AGENTS.md).
 

@@ -11,7 +11,9 @@
     "db:push": "prisma db push",
     "seed": "tsx --require dotenv/config scripts/seed.ts",
     "smoke": "node scripts/auth-smoke.mjs",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test": "node --import tsx --test 'tests/*.test.ts'",
+    "checkdois": "tsx scripts/check-dois.ts"
   },
   "prisma": {
     "seed": "tsx --require dotenv/config scripts/seed.ts"

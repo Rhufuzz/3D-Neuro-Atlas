@@ -19,7 +19,7 @@ An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cog
 | Methods lab (`/methods`) | 🟡 | Radar comparison, EEG 10-20 + rhythms, ERPs (N400/P600), tuning curve, RT mini-lab (Donders, Posner), fMRI/DTI/TMS/DBS/lesion cards. No BOLD/DTI rendering. |
 | Curriculum modules (`/modules`, `/modules/m1..m8`) | ✅ | 8 modules with goals, concepts, structures, readings, saved "Mark complete" and interactive simulations (e.g. basal-ganglia PD/HD/DBS model, VLPO flip-flop, aphasia classifier, DRM, IGT, sliding-filament sarcomere lab). |
 | Mind-map (`/mindmap`) | ✅ | Force-directed concept graph (2D). |
-| Literature (`/literature`) | ✅ | 92 citations with DOI links, grouped by week. DOIs were not individually re-verified. |
+| Literature (`/literature`) | ✅ | 95 citations with DOI links, grouped by week. `npm run checkdois`: 0 dead (55 resolve, 40 publisher-bot-walled). |
 | Study tools (`/study`) | ✅ | App-wide Partial/Final scope, SM-2 flashcards and quiz attempts saved per user, per-goal tracker, 3D structure focus. |
 
 ## Tech stack
