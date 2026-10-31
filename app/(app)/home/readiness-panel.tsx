@@ -33,6 +33,7 @@ interface ReadinessData {
     due: number;
     total: number;
   };
+  streak?: number;
 }
 
 export default function ReadinessPanel() {
@@ -91,6 +92,11 @@ export default function ReadinessPanel() {
           <p className="text-[11px] text-muted-foreground group-hover:text-foreground transition-colors flex items-center gap-1">
             {flashcards.due > 0 ? 'Review now to keep memory sharp' : 'All caught up — click to review ahead'} <ArrowRight className="h-3 w-3 inline group-hover:translate-x-0.5 transition-transform" />
           </p>
+          {typeof data.streak === 'number' && (
+            <p className="text-[11px] flex items-center gap-1" title="Consecutive days with any saved study activity">
+              {data.streak > 0 ? <><span aria-hidden>🔥</span><span className="text-warning font-medium">{data.streak}-day streak</span>{data.streak >= 3 ? ' — keep it alive!' : ''}</> : <span className="text-muted-foreground">Study today to start a streak 🔥</span>}
+            </p>
+          )}
         </Link>
 
         {/* Weakest goal / next best action */}

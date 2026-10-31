@@ -32,13 +32,34 @@ export async function GET() {
   const userId = session?.user?.id;
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
-    const [goalRows, stepRows, quizRows, cardRows, customRows] = await Promise.all([
+    const [goalRows, stepRows, quizRows, cardRows, customRows, sampleRows, elabRows] = await Promise.all([
       prisma.goalProgress.findMany({ where: { userId, done: true } }),
       prisma.learnStepProgress.findMany({ where: { userId, done: true } }),
       prisma.quizAttempt.findMany({ where: { userId }, orderBy: { createdAt: 'desc' }, take: 100 }),
       prisma.flashcardProgress.findMany({ where: { userId } }),
       prisma.userFlashcard.findMany({ where: { userId } }),
+      prisma.sampleExamAttempt.findMany({ where: { userId }, orderBy: { createdAt: 'desc' }, take: 50 }),
+      prisma.goalElaboration.findMany({ where: { userId } }),
     ]);
+
+    // Study streak: consecutive UTC days (ending today, with a 1-day grace) with any
+    // saved activity — reviews, quiz/drill attempts, sample exams, ticks, elaborations.
+    const activityDays = new Set<string>();
+    const addDay = (d: Date | null | undefined) => { if (d) activityDays.add(new Date(d).toISOString().slice(0, 10)); };
+    cardRows.forEach((r) => addDay(r.lastReviewed));
+    customRows.forEach((r) => addDay(r.updatedAt));
+    quizRows.forEach((r) => addDay(r.createdAt));
+    sampleRows.forEach((r) => addDay(r.createdAt));
+    stepRows.forEach((r) => addDay(r.updatedAt));
+    goalRows.forEach((r) => addDay(r.updatedAt));
+    elabRows.forEach((r) => addDay(r.updatedAt));
+    let streak = 0;
+    if (activityDays.size > 0) {
+      const day = (d: Date) => d.toISOString().slice(0, 10);
+      let cursor = new Date();
+      if (!activityDays.has(day(cursor))) cursor = new Date(Date.now() - 86400000);
+      while (activityDays.has(day(cursor))) { streak += 1; cursor = new Date(cursor.getTime() - 86400000); }
+    }
 
     // Flashcard stats
     const now = Date.now();
@@ -124,6 +145,7 @@ export async function GET() {
     return NextResponse.json({
       readiness: { partialPct, finalPct, modules, weakest },
       flashcards: { due: flashcardsDue, total: flashcardsTotal },
+      streak,
     });
   } catch (e) {
     console.error('readiness GET', e);
