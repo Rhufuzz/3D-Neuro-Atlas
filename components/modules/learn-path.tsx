@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CheckCircle2, Circle, ChevronRight, Map, Target, Sparkles } from 'lucide-react';
 import type { LearnStep } from '@/lib/data/learn';
+import ElaborationBox from './elaboration-box';
 
 const STEPS_KEY = 'cortex-learn-steps';
 const GOALS_KEY = 'cortex-goal-done';
@@ -153,11 +154,14 @@ export function GoalTracker({ moduleId, goals }: { moduleId: string; goals: stri
         {goals.map((g, i) => {
           const isDone = ready && !!ticks[`${moduleId}:${i}`];
           return (
-            <li key={i}>
+            <li key={i} className="space-y-1">
               <button type="button" onClick={() => toggle(moduleId, i)} className="flex items-start gap-2 text-left text-sm w-full group">
                 {isDone ? <CheckCircle2 className="h-4 w-4 shrink-0 text-success mt-0.5" /> : <Circle className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary mt-0.5" />}
                 <span className={isDone ? 'text-muted-foreground line-through' : ''}>{g}</span>
               </button>
+              <div className="pl-6">
+                <ElaborationBox moduleId={moduleId} goalIndex={i} />
+              </div>
             </li>
           );
         })}

@@ -26,6 +26,7 @@ model User {
   goalTicks     GoalProgress[]
   customCards   UserFlashcard[]
   sampleExams   SampleExamAttempt[]
+  elaborations  GoalElaboration[]
 }
 
 model Account {
@@ -178,4 +179,21 @@ model SampleExamAttempt {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+// Student self-explanations per learning goal ("explain it in your own words"),
+// with confidence self-rating: clear, shaky, or lost.
+model GoalElaboration {
+  id         String   @id @default(cuid())
+  userId     String
+  moduleId   String
+  goalIndex  Int
+  text       String   @db.Text
+  confidence String   @default("shaky")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId, goalIndex])
+  @@index([userId])
 }
