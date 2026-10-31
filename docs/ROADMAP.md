@@ -70,6 +70,15 @@ and the arcade games listed under §7.
 
 ## §7 Study HUD
 
+- ✅ **Home dashboard** (`/home`, post-login landing): continue-where-you-left-off (first uncompleted module),
+  exam countdowns, a 4-step "how to use this app" guide, module grid with completion ticks, lab quick links.
+- ✅ First-visit onboarding tour (4 steps: modules → labs → spaced repetition → exam prep), dismissible.
+- ✅ Guided-path steps and learning-goal ticks **synced to the account** (`/api/progress/learn`, `/api/progress/goals`;
+  localStorage union-merged and migrated up on first load; offline fallback).
+- ✅ **Try-this** guided micro-instructions above every lab section and module simulation
+  (`lib/data/try-this.ts`) — concrete do-this-watch-for-that steps tied to the real controls.
+- ✅ Curriculum back-links: every Micro/Methods section shows "Part of Module N", and atlas structures
+  link the modules that teach them (weeks intersection).
 - ✅ App-wide exam scope toggle (Partial = Weeks 1–7 / Final = 1–11) in the nav; filters atlas, modules,
   mind-map, study items and literature.
 - ✅ Exam Prep page (`/exam`): exam logistics from the official manual (dates, 60-MC format, pass rules),
