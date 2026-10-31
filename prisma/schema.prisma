@@ -22,6 +22,8 @@ model User {
   flashcards    FlashcardProgress[]
   quizAttempts  QuizAttempt[]
   modules       ModuleProgress[]
+  learnSteps    LearnStepProgress[]
+  goalTicks     GoalProgress[]
 }
 
 model Account {
@@ -107,4 +109,34 @@ model ModuleProgress {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, moduleId])
+}
+
+// Guided-path steps ticked per module ("Mark as understood"), one row per user x module x step
+model LearnStepProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  moduleId  String
+  stepIndex Int
+  done      Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId, stepIndex])
+  @@index([userId])
+}
+
+// Official learning goals ticked off per module, one row per user x module x goal
+model GoalProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  moduleId  String
+  goalIndex Int
+  done      Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId, goalIndex])
+  @@index([userId])
 }
