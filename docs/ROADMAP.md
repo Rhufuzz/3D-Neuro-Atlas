@@ -74,6 +74,12 @@ and the arcade games listed under §7.
   exam countdowns, a 4-step "how to use this app" guide, module grid with completion ticks, lab quick links.
 - ✅ **Exam-readiness analytics** on `/home` (`/api/progress/readiness`): estimated course mastery vs 55%
   pass line, cards due today counter, and top 3 weakest learning goals to study next.
+- ✅ **Study streak tracking**: consecutive study days counter displayed with fire badge on `/home`.
+- ✅ **Mistake Review Mode** (`/study#mistakes`): rapid-fire drill on the student's personal error deck.
+- ✅ **Interactive Simulation Challenges**: discovery puzzles with hints on module simulations (`SimChallenge`).
+- ✅ **Printable Exam Reference Sheet** (`/exam/cheat-sheet`): print-optimized quick-revision sheet with key formulas,
+  pharmacology matrix, aphasia table, and scope-filtered learning goals.
+- ✅ **Automated daily PostgreSQL backups**: `scripts/backup.sh` (03:00 UTC daily cron, 14-day retention).
 - ✅ **Wrong-answer → flashcard loop**: 1-click "Add to review deck" on missed drill, quiz, and sample-exam
   questions; creates user flashcards (`UserFlashcard`) that enter the SM-2 review queue.
 - ✅ **Sample-exam analytics**: per-part breakdown (Part 1 Midterm vs Part 2 Post-midterm) with pass-range
