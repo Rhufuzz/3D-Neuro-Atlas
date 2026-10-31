@@ -41,7 +41,15 @@ export default function ExamPage() {
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold flex items-center gap-2"><GraduationCap className="h-6 w-6 text-primary" />Exam Prep</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold flex items-center gap-2"><GraduationCap className="h-6 w-6 text-primary" />Exam Prep</h1>
+          <Link
+            href="/exam/cheat-sheet"
+            className="text-xs px-3 py-1.5 rounded-full bg-primary/15 text-primary hover:bg-primary/25 font-medium transition-colors inline-flex items-center gap-1.5"
+          >
+            <BookMarked className="h-3.5 w-3.5" /> Exam Reference Sheet (Printable) →
+          </Link>
+        </div>
         <p className="text-sm text-muted-foreground max-w-3xl">{COURSE_INFO.name} · {COURSE_INFO.year} · {COURSE_INFO.lecturers}. Two partial exams of 60 multiple-choice questions each; your average decides the course grade (pass ≥ 5.5, one exam may compensate the other). Built from the official course manual and study guide.</p>
       </div>
 
