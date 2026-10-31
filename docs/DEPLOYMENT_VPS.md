@@ -31,6 +31,29 @@ cd /opt/cortex-aether && bash deploy/update.sh          # pull main from GitHub,
 BRANCH=feature-x bash deploy/update.sh                  # deploy another branch
 ```
 
+## Database backups & disaster recovery
+
+A daily backup job runs via root cron at 03:00 UTC (`scripts/backup.sh`):
+- Compressed dumps stored in `/var/backups/cortex-aether/`
+- Retention: 14 rolling daily snapshots
+- Log: `/var/log/cortex-backup.log`
+
+### Restoring from backup
+```bash
+# 1. Stop the application
+systemctl stop cortex-aether
+
+# 2. Pick a snapshot
+LATEST=$(ls -t /var/backups/cortex-aether/cortex_aether_*.sql.gz | head -1)
+
+# 3. Restore via pg_restore
+gunzip -c "$LATEST" | su - postgres -c "pg_restore -d cortex_aether --clean --if-exists"
+
+# 4. Restart and check health
+systemctl start cortex-aether
+curl http://127.0.0.1:3100/api/health
+```
+
 `update.sh` turns the folder into a git checkout on first use (it was originally installed from a tarball),
 hard-resets tracked files to the fetched branch (`.env`, `node_modules`, `.next` are untracked and kept), then runs
 `deploy.sh`.
