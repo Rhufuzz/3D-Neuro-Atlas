@@ -45,6 +45,7 @@ export default function ModuleDrill({ moduleId, weeks }: { moduleId: string; wee
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ mode: 'practice', scope: 'final', answers, durationS: 0 }),
         }).catch(() => {});
+        window.dispatchEvent(new Event('cortex-xp-change'));
       }
       setPhase('cards');
     } else setIdx(idx + 1);

@@ -22,6 +22,7 @@ export function LearnPath({ moduleId, steps }: { moduleId: string; steps: LearnS
     const next = { ...doneSteps, [key]: !doneSteps[key] };
     setDoneSteps(next);
     try { localStorage.setItem(STEPS_KEY, JSON.stringify(next)); } catch {}
+    window.dispatchEvent(new Event('cortex-xp-change'));
   };
   const doneCount = steps.filter((_, i) => doneSteps[`${moduleId}:${i}`]).length;
   const allDone = doneCount === steps.length;
@@ -84,6 +85,7 @@ export function GoalTracker({ moduleId, goals }: { moduleId: string; goals: stri
       localStorage.setItem(GOALS_KEY, JSON.stringify(all));
     } catch {}
     setDone({ ...done, [i]: !done[i] });
+    window.dispatchEvent(new Event('cortex-xp-change'));
   };
   const count = goals.filter((_, i) => done[i]).length;
 

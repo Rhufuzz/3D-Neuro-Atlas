@@ -4,22 +4,33 @@ import { getModule } from '@/lib/data/curriculum';
 import { getStructure } from '@/lib/data/structures';
 import { getCitation } from '@/lib/data/citations';
 import { LEARN } from '@/lib/data/learn';
+import { QUIZ } from '@/lib/data/quiz';
 import ModuleSim from '@/components/modules/module-sim';
 import ModuleCompleteButton from '@/components/modules/module-complete-button';
 import { LearnPath, GoalTracker } from '@/components/modules/learn-path';
 import ModuleDrill from '@/components/modules/module-drill';
+import { ModuleArcade } from '@/components/modules/module-games';
+import { ModuleXP } from '@/components/modules/module-xp';
 
 export default async function ModulePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const m = getModule(id);
   if (!m) notFound();
+  const pairs = m.keyConcepts.map((k) => ({ term: k.term, def: k.def }));
+  const structures = m.structures
+    .map((s: string) => { const st = getStructure(s); return st ? { id: s, name: st.name, fn: st.functions[0] ?? '' } : null; })
+    .filter((s): s is { id: string; name: string; fn: string } => !!s);
+  const quizPool = QUIZ.filter((q) => m.weeks.includes(q.week)).map((q) => ({ id: q.id, question: q.question, options: q.options, answer: q.answer, explanation: q.explanation }));
   return (
     <div className="space-y-5">
       <div>
         <p className="text-sm" style={{ color: m.color }}>Module {m.number} · {m.weekLabel}</p>
         <h1 className="text-2xl font-bold">{m.title}</h1>
         <p className="text-muted-foreground">{m.tagline}</p>
-        <div className="mt-3"><ModuleCompleteButton moduleId={m.id} /></div>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <ModuleCompleteButton moduleId={m.id} />
+          <ModuleXP moduleId={m.id} steps={LEARN[m.id]?.length ?? 0} goals={m.goals.length} />
+        </div>
       </div>
       <section className="panel p-4 rounded-lg">
         <h2 className="font-semibold flex items-center gap-2 mb-2"><Target className="h-4 w-4 text-primary" />Learning goals</h2>
@@ -37,6 +48,7 @@ export default async function ModulePage({ params }: { params: Promise<{ id: str
       </section>
       <ModuleSim id={m.id} />
       <ModuleDrill moduleId={m.id} weeks={m.weeks} />
+      <ModuleArcade moduleId={m.id} pairs={pairs} structures={structures} questions={quizPool} />
       <section className="panel p-4 rounded-lg">
         <h2 className="font-semibold flex items-center gap-2 mb-2"><Brain className="h-4 w-4 text-primary" />Key structures</h2>
         <div className="flex flex-wrap gap-2">{m.structures.map((s: string) => <span key={s} className="text-xs bg-muted px-2 py-1 rounded">{getStructure(s)?.name ?? s}</span>)}</div>
