@@ -88,3 +88,11 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 5. Atlas visual-quality pass — real cortical-area meshes (Harvard-Oxford cortical) + materials/lighting
    overhaul to meet the owner's bar: as detailed as and more beautiful than
    <https://neurotorium.org/tool/brain-atlas/> (see AGENTS.md).
+
+## Done in the AAA pass (83a14f7)
+
+- ✅ Atlas visual pass (candidate 5): bloom + ACES tone mapping, cinematic intro + branded loading
+  progress, starfield, idle cinematography, fake-SSS shader tint; **real Harvard-Oxford cortical
+  parcellation baked per-vertex** (100% surface coverage, side-audited) — cortical coloring and
+  picking now follow true anatomy; seed Voronoi kept as fallback.
+- ✅ `/api/health` operational probe (DB-backed 200/503).
