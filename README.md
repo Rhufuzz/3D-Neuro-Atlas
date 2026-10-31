@@ -20,6 +20,7 @@ An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cog
 | Curriculum modules (`/modules`, `/modules/m1..m8`) | ✅ | 8 modules with goals, concepts, structures, readings, saved "Mark complete" and interactive simulations (e.g. basal-ganglia PD/HD/DBS model, VLPO flip-flop, aphasia classifier, DRM, IGT, sliding-filament sarcomere lab). |
 | Mind-map (`/mindmap`) | ✅ | Force-directed concept graph (2D). |
 | Literature (`/literature`) | ✅ | 95 citations with DOI links, grouped by week. `npm run checkdois`: 0 dead (55 resolve, 40 publisher-bot-walled). |
+| Exam Prep (`/exam`) | ✅ | Exam dates/material/countdowns, the full 65-question official sample exam with answer key (exam mode + check-as-you-go study mode), all weekly learning goals as a tick-off tracker, and the study-guide tips. |
 | Study tools (`/study`) | ✅ | App-wide Partial/Final scope, SM-2 flashcards and quiz attempts saved per user, per-goal tracker, 3D structure focus. |
 
 ## Tech stack

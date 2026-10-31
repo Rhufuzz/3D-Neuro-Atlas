@@ -69,6 +69,9 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 
 - ✅ App-wide exam scope toggle (Partial = Weeks 1–7 / Final = 1–11) in the nav; filters atlas, modules,
   mind-map, study items and literature.
+- ✅ Exam Prep page (`/exam`): exam logistics from the official manual (dates, 60-MC format, pass rules),
+  the complete 65-question sample exam with the published key (exam + study modes), per-week learning
+  goals from the study guide as an interactive checklist, and the study-strategy tips.
 - ✅ "Bigger picture" force-directed mind-map (`/mindmap`, 2D).
 - ✅ Flashcards with SM-2 scheduling saved per user; cards with a structure hide the label and highlight it in 3D.
 - ✅ Practice quiz with saved attempts, per-goal tracker and 3D focus on the relevant structure.

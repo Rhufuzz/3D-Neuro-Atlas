@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic';
 
 const LINKS = [
   { href: '/atlas', label: '3D Atlas', short: 'Atlas', icon: Brain },
+  { href: '/exam', label: 'Exam Prep', short: 'Exam', icon: GraduationCap },
   { href: '/micro', label: 'Micro-Scale Lab', short: 'Micro', icon: Microscope },
   { href: '/modules', label: 'Modules', short: 'Modules', icon: BookOpen },
   { href: '/methods', label: 'Methods Lab', short: 'Methods', icon: FlaskConical },
