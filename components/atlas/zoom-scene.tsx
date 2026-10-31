@@ -264,7 +264,7 @@ export default function ZoomScene({ initialDepth = 0.06, fill = false }: { initi
     const el = host.current;
     if (!el) return;
     let disposed = false;
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 2));
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
