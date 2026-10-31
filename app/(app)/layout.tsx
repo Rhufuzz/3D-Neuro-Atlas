@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { Brain, BookOpen, Library, GraduationCap, Network, FlaskConical, Microscope } from 'lucide-react';
+import { Brain, BookOpen, Library, GraduationCap, Network, FlaskConical, Microscope, Home } from 'lucide-react';
 import { auth } from '@/auth';
 import { MODULES } from '@/lib/data/curriculum';
 import ScopeToggle from '@/components/scope-toggle';
@@ -9,6 +9,7 @@ import SignOutButton from './sign-out-button';
 export const dynamic = 'force-dynamic';
 
 const LINKS = [
+  { href: '/home', label: 'Home', short: 'Home', icon: Home },
   { href: '/atlas', label: '3D Atlas', short: 'Atlas', icon: Brain },
   { href: '/exam', label: 'Exam Prep', short: 'Exam', icon: GraduationCap },
   { href: '/micro', label: 'Micro-Scale Lab', short: 'Micro', icon: Microscope },
@@ -25,7 +26,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen neuro-bg flex">
       <nav className="hidden md:flex w-60 shrink-0 flex-col gap-1 p-4 glass-panel sticky top-0 h-screen overflow-y-auto">
-        <Link href="/atlas" className="text-lg font-bold glow-text mb-3">CORTEX-AETHER</Link>
+        <Link href="/home" className="text-lg font-bold glow-text mb-3">CORTEX-AETHER</Link>
         <div className="mb-3"><ScopeToggle /></div>
         {LINKS.map((l) => (
           <div key={l.href}>
@@ -43,7 +44,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="flex-1 min-w-0">
         <header className="md:hidden glass-panel p-3 space-y-2 text-sm">
           <div className="flex items-center justify-between gap-2">
-            <Link href="/atlas" className="font-bold glow-text">CORTEX-AETHER</Link>
+            <Link href="/home" className="font-bold glow-text">CORTEX-AETHER</Link>
             <ScopeToggle compact />
           </div>
           <div className="flex gap-3 overflow-x-auto pb-1">

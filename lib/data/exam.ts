@@ -15,6 +15,12 @@ export interface ExamInfo {
   note: string;
 }
 
+/** ISO timestamps for the fixed exam sittings (resit date is TBC, not counted down). */
+export const EXAM_DATE_ISO: Partial<Record<ExamInfo['id'], string>> = {
+  midterm: '2026-12-17T18:45:00+01:00',
+  final: '2027-01-26T08:30:00+01:00',
+};
+
 export const EXAMS: ExamInfo[] = [
   {
     id: 'midterm',

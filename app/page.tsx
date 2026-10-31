@@ -5,5 +5,5 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const session = await auth();
-  redirect(session?.user ? '/atlas' : '/login');
+  redirect(session?.user ? '/home' : '/login');
 }

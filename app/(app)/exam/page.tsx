@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { GraduationCap, CalendarClock, BookMarked, Lightbulb, Timer } from 'lucide-react';
-import { EXAMS, COURSE_INFO, STUDY_TIPS } from '@/lib/data/exam';
+import { EXAMS, COURSE_INFO, STUDY_TIPS, EXAM_DATE_ISO } from '@/lib/data/exam';
 import WeeklyPlan from './weekly-plan';
 import SampleExam from './sample-exam';
 
@@ -12,7 +12,7 @@ function Countdown() {
   const targets = COUNTDOWN_TARGETS.map((e) => ({
     id: e.id,
     name: e.name,
-    date: e.id === 'midterm' ? new Date('2026-12-17T18:45:00+01:00') : new Date('2027-01-26T08:30:00+01:00'),
+    date: new Date(EXAM_DATE_ISO[e.id]!),
     label: e.date,
   }));
   return (
