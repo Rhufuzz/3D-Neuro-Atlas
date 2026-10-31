@@ -10,7 +10,7 @@ import CellExplorer from './cell-explorer';
 import SynapseSim from './synapse-sim';
 import LtpSteps from './ltp-steps';
 
-const ZoomScene = dynamic(() => import('./zoom-scene'), {
+const ZoomScene = dynamic(() => import('@/components/atlas/zoom-scene'), {
   ssr: false,
   loading: () => <div className="h-[420px] grid place-items-center text-muted-foreground text-sm">Loading zoom scene…</div>,
 });

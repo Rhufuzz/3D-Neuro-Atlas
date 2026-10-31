@@ -253,10 +253,10 @@ function buildChannel(): THREE.Group {
   return g;
 }
 
-export default function ZoomScene() {
+export default function ZoomScene({ initialDepth = 0.06, fill = false }: { initialDepth?: number; fill?: boolean }) {
   const host = useRef<HTMLDivElement | null>(null);
-  const [depth, setDepth] = useState(0.06);
-  const depthRef = useRef(0.06);
+  const [depth, setDepth] = useState(initialDepth);
+  const depthRef = useRef(initialDepth);
   depthRef.current = depth;
   const band = BANDS.find((b) => depth >= b.depth[0] && depth < b.depth[1]) ?? BANDS[BANDS.length - 1];
 
@@ -358,7 +358,7 @@ export default function ZoomScene() {
 
   return (
     <div className="space-y-3">
-      <div ref={host} className="relative w-full h-[420px] rounded-lg overflow-hidden" aria-label="Zoom through neural scales">
+      <div ref={host} className={`relative w-full ${fill ? 'h-full' : 'h-[420px]'} rounded-lg overflow-hidden`} aria-label="Zoom through neural scales">
         <div className="absolute left-3 top-3 glass-panel px-3 py-2 rounded-lg text-xs space-y-1">
           <p className="font-semibold text-primary">{band.name}</p>
           <p className="text-[11px] text-muted-foreground max-w-[260px]">{band.fact}</p>

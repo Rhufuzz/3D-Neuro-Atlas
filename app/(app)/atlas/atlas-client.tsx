@@ -15,6 +15,7 @@ import { devStageAt } from '@/lib/data/methods';
 import type { BrainStructure, Pathway, PathwayStage } from '@/lib/data/types';
 
 const BrainViewer = dynamic(() => import('@/components/atlas/brain-viewer'), { ssr: false, loading: () => <div className="h-[60vh] grid place-items-center text-muted-foreground">Loading 3D atlas…</div> });
+const ZoomScene = dynamic(() => import('@/components/atlas/zoom-scene'), { ssr: false, loading: () => <div className="h-full grid place-items-center text-muted-foreground">Diving to micro scale…</div> });
 
 export default function AtlasClient({ initial = null }: { initial?: string | null }) {
   const { isIn, scope } = useScope();
@@ -27,6 +28,7 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
   const [stage, setStage] = useState(0);
   const [para, setPara] = useState<string>('');
   const [dtiOn, setDtiOn] = useState(false);
+  const [zoomOpen, setZoomOpen] = useState(false);
   const s = getStructure(selected);
   const pw = PATHWAYS.find((p: Pathway) => p.id === pathway);
   const st: PathwayStage | undefined = pw?.stages?.[stage];
@@ -54,7 +56,7 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
       </aside>
       <section className="panel p-2 relative">
         <BrainViewer opacity={opacity} showGrid={grid} showCsf={csf} showDeep dev={dev} selected={selected} highlight={st?.highlight ?? []} streams={streams} bold={bold} dti={dti} onSelect={setSelected} />
-        <Link href="/micro" className="absolute right-3 top-3 glass-panel px-3 py-2 rounded-lg text-xs flex items-center gap-1.5 hover:text-primary"><Microscope className="h-3.5 w-3.5 text-primary" />Zoom to Micro-Scale</Link>
+        <button onClick={() => setZoomOpen(true)} className="absolute right-3 top-3 glass-panel px-3 py-2 rounded-lg text-xs flex items-center gap-1.5 hover:text-primary cursor-pointer"><Microscope className="h-3.5 w-3.5 text-primary" />Zoom to Micro-Scale</button>
         <div className="absolute left-3 top-3 glass-panel p-3 rounded-lg space-y-2 text-xs w-60">
           <label className="block">X-ray cortical opacity: {opacity.toFixed(2)}<input aria-label="Cortical opacity" type="range" min={0.05} max={1} step={0.01} value={opacity} onChange={(e) => setOpacity(parseFloat(e.target.value))} className="range-neuro w-full" /></label>
           <label className="block">Development: {ds?.label} ({ds?.age})<input aria-label="Development" type="range" min={0} max={1} step={0.01} value={dev} onChange={(e) => setDev(parseFloat(e.target.value))} className="range-neuro w-full" /></label>
@@ -102,6 +104,20 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
           </div>
         ) : <p className="text-sm text-muted-foreground">Click a structure in the 3D view or the list to inspect it.</p>}
       </aside>
+      {zoomOpen && (
+        <div className="fixed inset-0 z-50 bg-[#04060b]/97 backdrop-blur-sm p-4 md:p-6" role="dialog" aria-modal="true" aria-label="Zoom through scales">
+          <div className="max-w-5xl mx-auto h-full flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold glow-text">Zoom through scales</h2>
+                <p className="text-xs text-muted-foreground">From the whole brain to single ion channels — scroll or drag the slider. <Link href="/micro" className="text-primary hover:underline">Open the full Micro-Scale Lab →</Link></p>
+              </div>
+              <button onClick={() => setZoomOpen(false)} aria-label="Close zoom" className="glass-panel rounded-lg p-2 hover:text-primary"><X className="h-5 w-5" /></button>
+            </div>
+            <div className="flex-1 min-h-0"><ZoomScene initialDepth={0.5} fill /></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
