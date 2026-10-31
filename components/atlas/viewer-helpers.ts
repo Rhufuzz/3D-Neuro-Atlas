@@ -14,7 +14,7 @@ varying vec3 vN; varying vec3 vV; varying vec3 vW;
 void main(){ vec3 N=normalize(vN); vec3 V=normalize(vV); float f = pow(1.0-abs(dot(N,V)),2.2);
  vec3 c = uColor*(0.35+0.5*max(dot(N,normalize(vec3(0.4,0.8,0.6))),0.0));
  vec3 iri = 0.5+0.5*cos(6.2831*(f*1.3+uTime*0.05+vec3(0.0,0.33,0.67)));
- c = mix(c, c*0.6+iri*0.5, uIri*f); c += uColor*f*1.2;
+ c = mix(c, c*0.6+iri*0.5, uIri*f); c += uColor*f*1.2; c = mix(c, c*vec3(0.6,0.68,1.0), smoothstep(0.15,0.6,abs(dot(N,V)))*0.5); c += uColor*pow(f,1.6)*0.55;
  float pulse = 0.65+0.35*pow(0.5+0.5*sin(uTime*6.9),3.0);
  float caustic = sin(vW.x*70.0+uTime*1.7)*sin(vW.y*55.0-uTime*2.6)*sin(vW.z*63.0+uTime*1.2);
  float flow = uFlow*pulse*(0.45+0.3*caustic+0.25*sin(vW.y*40.0-vW.z*25.0-uTime*3.0));
@@ -38,8 +38,8 @@ const cortexFS = `uniform float uOpacity; uniform float uTime; uniform float uIr
 varying vec3 vN; varying vec3 vV; varying vec3 vCol; varying float vHi;
 void main(){ vec3 N=normalize(vN); vec3 V=normalize(vV); float f = pow(1.0-abs(dot(N,V)),2.0);
  float lam = 0.3+0.7*max(dot(N,normalize(vec3(0.3,0.9,0.4))),0.0) + 0.25*max(dot(N,normalize(vec3(-0.6,-0.2,-0.7))),0.0);
- vec3 c = vCol*lam*0.85; vec3 iri = 0.5+0.5*cos(6.2831*(f*1.2+uTime*0.04+vec3(0.0,0.33,0.67)));
- c = mix(c, c*0.6+iri*0.45, uIri*f); c += vCol*f*0.9;
+ vec3 c = vCol*lam*0.95; vec3 iri = 0.5+0.5*cos(6.2831*(f*1.2+uTime*0.04+vec3(0.0,0.33,0.67)));
+ c = mix(c, c*0.6+iri*0.45, uIri*f); c += vCol*f*1.05; c += vCol*pow(f,1.6)*0.55;
  c += vec3(0.55,1.0,1.0)*vHi*(0.5+0.3*sin(uTime*4.0));
  gl_FragColor = vec4(c, clamp(uOpacity*(0.4+0.85*f)+vHi*0.5,0.0,1.0)); }`;
 

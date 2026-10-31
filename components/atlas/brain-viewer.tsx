@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { ALL_STRUCTURES, CORTICAL_AREAS, STRUCTURE_MAP, expandIds } from '@/lib/data/structures';
 import type { BrainStructure, Vec3 } from '@/lib/data/types';
 import { S, mni, glassMat, cortexMat, laplacianSmooth, buildNeuralTube, makeDotTexture, buildStreams, MAX_AREAS } from './viewer-helpers';
@@ -42,7 +46,7 @@ export interface ViewerProps {
   heightClass?: string;
 }
 
-function colorHemisphere(g: THREE.BufferGeometry, side: number): void {
+function colorHemisphere(g: THREE.BufferGeometry, side: number, meta: { areas: string[]; rh: Uint8Array | null; lh: Uint8Array | null } | null): void {
   const p = g.attributes.position as THREE.BufferAttribute;
   const n = p.count;
   const seeds: { x: number; y: number; z: number; a: number }[] = [];
@@ -52,12 +56,18 @@ function colorHemisphere(g: THREE.BufferGeometry, side: number): void {
   });
   const base = new THREE.Color('#6fa8ff');
   const cols = AREA_IDS.map((id: string) => new THREE.Color(STRUCTURE_MAP[id]?.color ?? '#ffffff'));
+  const baked = meta ? (side === 1 ? meta.rh : meta.lh) : null;
+  const idToIdx = meta ? new Map(meta.areas.map((id: string) => [id, AREA_IDS.indexOf(id)])) : null;
   const col = new Float32Array(n * 3); const area = new Float32Array(n);
   for (let i = 0; i < n; i++) {
     const x = p.getX(i) / S, z = p.getY(i) / S + 10, y = -p.getZ(i) / S - 18;
-    let best = 1e9, ba = -1;
-    for (let k = 0; k < seeds.length; k++) { const d = (seeds[k].x - x) ** 2 + (seeds[k].y - y) ** 2 + (seeds[k].z - z) ** 2; if (d < best) { best = d; ba = seeds[k].a; } }
-    if (best > 24 * 24) ba = -1;
+    let ba = -1;
+    if (baked && idToIdx && baked[i] !== undefined && baked[i] < 255) ba = idToIdx.get(meta!.areas[baked[i]]) ?? -1;
+    if (ba < 0) {
+      let best = 1e9;
+      for (let k = 0; k < seeds.length; k++) { const d = (seeds[k].x - x) ** 2 + (seeds[k].y - y) ** 2 + (seeds[k].z - z) ** 2; if (d < best) { best = d; ba = seeds[k].a; } }
+      if (best > 24 * 24) ba = -1;
+    }
     const c = ba >= 0 ? base.clone().lerp(cols[ba], 0.6) : base;
     col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b; area[i] = ba;
   }
@@ -71,6 +81,8 @@ export default function BrainViewer(props: ViewerProps) {
   propsRef.current = props;
   const streamApi = useRef<{ root: THREE.Group; tex: THREE.Texture; cur: ReturnType<typeof buildStreams> | null } | null>(null);
   const [meshState, setMeshState] = useState<'loading' | 'ready' | 'fallback'>('loading');
+  const [progress, setProgress] = useState(0);
+  const metaRef = useRef<{ areas: string[]; rh: Uint8Array | null; lh: Uint8Array | null } | null>(null);
   const streamKey = JSON.stringify(props.streams ?? []);
 
   useEffect(() => {
@@ -80,12 +92,26 @@ export default function BrainViewer(props: ViewerProps) {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 2));
     renderer.setSize(el.clientWidth, el.clientHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.12;
     el.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color('#04060b');
     const camera = new THREE.PerspectiveCamera(40, el.clientWidth / Math.max(1, el.clientHeight), 0.01, 100);
-    camera.position.set(-5.2, 2.2, -4.2);
+    camera.position.set(-7.6, 3.6, -6.4);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.45;
+    const stopAuto = () => { controls.autoRotate = false; renderer.domElement.removeEventListener('pointerdown', stopAuto); renderer.domElement.removeEventListener('wheel', stopAuto); };
+    renderer.domElement.addEventListener('pointerdown', stopAuto);
+    renderer.domElement.addEventListener('wheel', stopAuto, { passive: true });
+    const maxSamples = renderer.capabilities.maxSamples ?? 0;
+    const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(el.clientWidth, el.clientHeight, { type: THREE.HalfFloatType, samples: Math.min(4, maxSamples) }));
+    composer.addPass(new RenderPass(scene, camera));
+    const bloom = new UnrealBloomPass(new THREE.Vector2(el.clientWidth, el.clientHeight), propsRef.current?.compact ? 0.35 : 0.55, 0.55, 0.6);
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
     const root = new THREE.Group();
     scene.add(root);
     const meshes: THREE.Mesh[] = []; const csf: THREE.Mesh[] = []; const deep: THREE.Mesh[] = [];
@@ -148,9 +174,35 @@ export default function BrainViewer(props: ViewerProps) {
     root.add(grid);
     const tex = makeDotTexture();
     streamApi.current = { root, tex, cur: null };
+    // starfield backdrop (outside the scaling root so the dev slider never distorts it)
+    const starGeo = new THREE.BufferGeometry();
+    {
+      const n = 750; const arr = new Float32Array(n * 3);
+      for (let i = 0; i < n; i++) {
+        const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1), r = 9 + Math.random() * 9;
+        arr[i * 3] = r * Math.sin(ph) * Math.cos(th); arr[i * 3 + 1] = r * Math.cos(ph); arr[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
+      }
+      starGeo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+    }
+    const starMat = new THREE.PointsMaterial({ size: 0.045, map: tex, color: '#9fd8ff', transparent: true, opacity: 0.65, blending: THREE.AdditiveBlending, depthWrite: false });
+    const stars = new THREE.Points(starGeo, starMat);
+    stars.renderOrder = -1;
+    scene.add(stars);
+
+    const metaPromise: Promise<{ areas: string[]; rh: Uint8Array | null; lh: Uint8Array | null } | null> = fetch(MESH_URL.replace(/[^/]*$/, 'brain-v1.meta.json'))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((m: { areas?: string[]; rh?: string; lh?: string } | null) => {
+        if (!m?.areas?.length || typeof m.rh !== 'string' || typeof m.lh !== 'string') return null;
+        const dec = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+        const meta = { areas: m.areas, rh: dec(m.rh), lh: dec(m.lh) };
+        metaRef.current = meta;
+        return meta;
+      })
+      .catch(() => null);
 
     new GLTFLoader().load(MESH_URL, (gltf) => {
       if (disposed) return;
+      const meta = metaRef.current;
       const replaced = new Set<string>();
       gltf.scene.traverse((o: THREE.Object3D) => {
         const mesh = o as THREE.Mesh;
@@ -161,9 +213,9 @@ export default function BrainViewer(props: ViewerProps) {
         g.computeBoundingSphere();
         if (name === 'cortex-rh' || name === 'cortex-lh') {
           const side = name === 'cortex-rh' ? 1 : -1;
-          colorHemisphere(g, side);
+          colorHemisphere(g, side, meta);
           const m = new THREE.Mesh(g, cortexMat(0.3));
-          m.userData.hemi = true; m.renderOrder = 10;
+          m.userData.hemi = true; m.userData.side = side; m.renderOrder = 10;
           root.add(m); hemis.push(m);
           const orig = Float32Array.from((g.attributes.position as THREE.BufferAttribute).array as Float32Array);
           morph.push({ mesh: m, orig, smooth: laplacianSmooth(orig, (g.index?.array ?? []) as ArrayLike<number>, 60) });
@@ -193,7 +245,10 @@ export default function BrainViewer(props: ViewerProps) {
       surfaceLoaded = hemis.length > 0;
       morphDev = -1;
       setMeshState(surfaceLoaded ? 'ready' : 'fallback');
-    }, undefined, () => { if (!disposed) setMeshState('fallback'); });
+    }, (xhr) => { if (!disposed && xhr.total) setProgress(Math.min(100, Math.round((xhr.loaded / xhr.total) * 100))); }, () => { if (!disposed) setMeshState('fallback'); });
+
+    // if the meta file arrives after the meshes, recolor with anatomical parcellation
+    metaPromise.then((m) => { if (!disposed && m && surfaceLoaded) hemis.forEach((hm) => colorHemisphere(hm.geometry, hm.userData.side ?? 1, m)); });
 
     const ray = new THREE.Raycaster(); const ptr = new THREE.Vector2();
     let down = { x: 0, y: 0 }; let flying = 0; const camGoal = new THREE.Vector3();
@@ -220,10 +275,12 @@ export default function BrainViewer(props: ViewerProps) {
     };
     renderer.domElement.addEventListener('pointerdown', onDown);
     renderer.domElement.addEventListener('pointerup', onUp);
-    const onResize = () => { camera.aspect = el.clientWidth / Math.max(1, el.clientHeight); camera.updateProjectionMatrix(); renderer.setSize(el.clientWidth, el.clientHeight); };
+    const onResize = () => { camera.aspect = el.clientWidth / Math.max(1, el.clientHeight); camera.updateProjectionMatrix(); renderer.setSize(el.clientWidth, el.clientHeight); composer.setSize(el.clientWidth, el.clientHeight); };
     window.addEventListener('resize', onResize);
 
     let raf = 0; const clock = new THREE.Clock(); let lastSel: string | null = null;
+    // cinematic intro: dolly from the far position to the default view
+    camGoal.set(-5.2, 2.2, -4.2); flying = 130;
     const loop = () => {
       raf = requestAnimationFrame(loop);
       const t = clock.getElapsedTime(); const pr = propsRef.current;
@@ -281,7 +338,8 @@ export default function BrainViewer(props: ViewerProps) {
       if (flying > 0) { camera.position.lerp(camGoal, 0.06); flying -= 1; }
       controls.target.lerp(c ?? new THREE.Vector3(0, 0, 0), c ? 0.07 : 0.04);
       controls.update();
-      renderer.render(scene, camera);
+      stars.rotation.y = t * 0.004;
+      composer.render();
     };
     loop();
     return () => {
@@ -293,6 +351,9 @@ export default function BrainViewer(props: ViewerProps) {
       streamApi.current?.cur?.dispose();
       streamApi.current = null;
       controls.dispose();
+      composer.dispose();
+      starGeo.dispose();
+      starMat.dispose();
       renderer.dispose();
       el.removeChild(renderer.domElement);
     };
@@ -309,8 +370,15 @@ export default function BrainViewer(props: ViewerProps) {
   return (
     <div className="relative">
       <div ref={host} className={`w-full ${props.heightClass ?? (props.compact ? 'h-[300px]' : 'h-[60vh] md:h-[calc(100vh-8rem)]')} rounded-lg`} aria-label="Interactive 3D brain" />
-      {meshState !== 'ready' && (
-        <span className="absolute bottom-2 right-2 text-[10px] px-2 py-0.5 rounded bg-black/50 text-muted-foreground">{meshState === 'loading' ? 'Loading MNI152 meshes…' : 'Schematic mode (meshes unavailable)'}</span>
+      <div className={`absolute inset-0 grid place-items-center bg-[#04060b] transition-opacity duration-700 ${meshState === 'loading' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <div className="text-center space-y-3">
+          <p className="glow-text text-lg font-semibold tracking-[0.3em]">CORTEX-AETHER</p>
+          <div className="w-56 h-1.5 rounded-full bg-muted overflow-hidden mx-auto"><div className="h-full bg-gradient-to-r from-primary to-cyan-300 rounded-full transition-all" style={{ width: `${Math.max(6, progress)}%` }} /></div>
+          <p className="text-[11px] text-muted-foreground">Loading MNI152 meshes… {progress}%</p>
+        </div>
+      </div>
+      {meshState === 'fallback' && (
+        <span className="absolute bottom-2 right-2 text-[10px] px-2 py-0.5 rounded bg-black/50 text-muted-foreground">Schematic mode (meshes unavailable)</span>
       )}
     </div>
   );
