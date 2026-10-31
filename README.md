@@ -43,7 +43,8 @@ Useful scripts: `npm run typecheck`, `npm run build`, `npm run seed` (optional a
 
 ## Deploy to a VPS
 
-The app runs on an Ubuntu VPS next to other apps: systemd service on `127.0.0.1:3100`, nginx TLS on port `8445`.
+The app runs on an Ubuntu VPS next to other apps: systemd service on `127.0.0.1:3100`, nginx TLS on
+port `8445` (self-signed) and `8446` (valid Let's Encrypt via `ptclab-backup.duckdns.org`).
 Full runbook: [`docs/DEPLOYMENT_VPS.md`](docs/DEPLOYMENT_VPS.md). Updating after a push to `main`:
 
 ```bash

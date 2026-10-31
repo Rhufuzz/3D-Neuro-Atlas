@@ -80,8 +80,11 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 - ✅ VPS deployment scripts (systemd + nginx + PostgreSQL), update script.
 - ✅ Automated tests: node:test suites for `lib/sm2.ts` and `lib/force-layout.ts` (`npm test`);
   GitHub Actions CI (typecheck → tests → build, DOI report).
-- ⬜ Prisma migrations (currently `db push`).
-- ⬜ Real TLS certificate / domain (currently self-signed).
+- ✅ Prisma migrations: `000000000000_init` baselined from the `db push` schema (verified drift-free);
+  live DB marked applied; `deploy.sh` runs `migrate deploy`. See `prisma/migrations/README.md`.
+- 🟡 Real TLS: **valid Let's Encrypt certificate** served at `https://ptclab-backup.duckdns.org:8446`
+  (reuses the host's existing LE cert; site config in `deploy/nginx-cortex-aether-le.conf`, auth
+  smoke passes over it). A dedicated domain for the app itself needs the owner's DNS/token.
 
 ## Next candidates
 
