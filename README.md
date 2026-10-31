@@ -14,7 +14,7 @@ An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cog
 
 | Area | State | Notes |
 |---|---|---|
-| Home dashboard (`/home`) | ✅ | Post-login landing: continue-where-you-left-off, exam countdowns, how-to-use guide, module grid, first-visit onboarding tour. |
+| Home dashboard (`/home`) | ✅ | Post-login landing: continue-where-you-left-off, exam countdowns, how-to-use guide, module grid, exam-readiness estimate, cards-due counter, first-visit onboarding tour. |
 | Sign up / log in / log out | ✅ | Email + password (Auth.js v5 credentials, bcrypt, JWT sessions). All app pages require login. |
 | 3D Atlas (`/atlas`) | 🟡 | Three.js viewer: 66 structures; brain surface + subcortical nuclei are real meshes (MNI152 + Harvard-Oxford, `public/meshes/brain-v1.glb`), and the surface carries the real Harvard-Oxford cortical parcellation baked per-vertex (small brainstem nuclei are still markers). Cortex opacity, grid, CSF (ventricles + subarachnoid shell), neural-tube → adult development scrubber, 5 pathways with particle streams, `?s=<id>` deep links. No true SSS. |
 | Micro-scale lab (`/micro`) | ✅ | 3D zoom-through-scales scene (brain → neuron → synapse → ion channel, scroll-driven), Hodgkin–Huxley AP simulator, conduction, neuron/glia explorer, synapse + drug simulator, LTP steps. Every section has Try-this guidance and a back-link to its module. |

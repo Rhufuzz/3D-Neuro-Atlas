@@ -72,6 +72,14 @@ and the arcade games listed under §7.
 
 - ✅ **Home dashboard** (`/home`, post-login landing): continue-where-you-left-off (first uncompleted module),
   exam countdowns, a 4-step "how to use this app" guide, module grid with completion ticks, lab quick links.
+- ✅ **Exam-readiness analytics** on `/home` (`/api/progress/readiness`): estimated course mastery vs 55%
+  pass line, cards due today counter, and top 3 weakest learning goals to study next.
+- ✅ **Wrong-answer → flashcard loop**: 1-click "Add to review deck" on missed drill, quiz, and sample-exam
+  questions; creates user flashcards (`UserFlashcard`) that enter the SM-2 review queue.
+- ✅ **Sample-exam analytics**: per-part breakdown (Part 1 Midterm vs Part 2 Post-midterm) with pass-range
+  scores and auto-saved attempts (`SampleExamAttempt`).
+- ✅ **Elaboration prompts**: "Explain in your own words" generation-effect boxes with confidence ratings
+  (Clear / Shaky / Lost) per learning goal (`GoalElaboration`).
 - ✅ First-visit onboarding tour (4 steps: modules → labs → spaced repetition → exam prep), dismissible.
 - ✅ Guided-path steps and learning-goal ticks **synced to the account** (`/api/progress/learn`, `/api/progress/goals`;
   localStorage union-merged and migrated up on first load; offline fallback).
