@@ -15,8 +15,8 @@ id "$APP_USER" >/dev/null 2>&1 || useradd --system --home-dir "$APP_DIR" --shell
 
 echo "deploy: installing dependencies"
 npm install --no-audit --no-fund --legacy-peer-deps
-echo "deploy: syncing database schema"
-npx prisma db push --skip-generate
+echo "deploy: applying database migrations"
+npx prisma migrate deploy
 echo "deploy: building"
 npm run build
 
