@@ -7,6 +7,7 @@ import { Brain, Grid3x3, Droplets, Layers, X, Microscope } from 'lucide-react';
 import { useScope } from '@/lib/use-scope';
 import type { StreamSpec } from '@/components/atlas/brain-viewer';
 import { ATLAS_SECTIONS, structuresInSection, getStructure, formatMni } from '@/lib/data/structures';
+import { MODULES } from '@/lib/data/curriculum';
 import type { GroupInfo } from '@/lib/data/structures';
 import { getCitation } from '@/lib/data/citations';
 import { PATHWAYS } from '@/lib/data/pathways';
@@ -103,6 +104,13 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
           <div className="space-y-2 text-sm">
             <div className="flex justify-between items-start"><h3 className="text-lg font-semibold glow-text">{s.name}</h3><button aria-label="Clear selection" onClick={() => setSelected(null)}><X className="h-4 w-4" /></button></div>
             <p className="text-xs text-muted-foreground">MNI {formatMni(s.mni)}{s.brodmann ? ` · BA ${s.brodmann}` : ''} · Weeks {(s.weeks ?? []).join(', ')}</p>
+            {MODULES.filter((m) => (s.weeks ?? []).some((w: number) => m.weeks.includes(w))).length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {MODULES.filter((m) => (s.weeks ?? []).some((w: number) => m.weeks.includes(w))).map((m) => (
+                  <Link key={m.id} href={`/modules/${m.id}`} className="text-[11px] px-2 py-0.5 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition-colors">Module {m.number}: {m.title} →</Link>
+                ))}
+              </div>
+            )}
             <p>{s.description}</p>
             <ul className="list-disc pl-4 text-muted-foreground">{(s.functions ?? []).map((f: string) => <li key={f}>{f}</li>)}</ul>
             <p><span className="text-warning font-medium">Clinical: </span>{s.clinical}</p>

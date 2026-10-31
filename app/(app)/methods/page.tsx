@@ -7,14 +7,15 @@ import ErpPanel from './erp-panel';
 import TuningCurve from './tuning-curve';
 import RtLab from './rt-lab';
 import TryThis from '@/components/try-this';
+import SectionModuleLinks from '@/components/section-module-links';
 
-const SECTIONS: { id: string; title: string; icon: ReactNode; blurb: string; body: ReactNode }[] = [
-  { id: 'compare', title: 'Compare methods', icon: <Radar className="h-4 w-4" />, blurb: 'Spatial vs temporal resolution, invasiveness, cost and causal inference — no single method wins on every axis.', body: <MethodsRadar /> },
-  { id: 'in-3d', title: 'Methods on the 3D brain', icon: <Box className="h-4 w-4" />, blurb: 'fMRI contrasts, DTI tractography, TMS and DBS targets and classic lesion cases rendered on the MNI brain.', body: <Methods3D /> },
-  { id: 'eeg', title: 'EEG: 10–20 system & rhythms', icon: <Waves className="h-4 w-4" />, blurb: 'Click an electrode to see the cortex beneath it; switch between oscillation bands and sleep stages.', body: <EegLab /> },
-  { id: 'erp', title: 'ERPs: N400 & P600', icon: <Activity className="h-4 w-4" />, blurb: 'Averaged brain responses time-locked to a critical word reveal semantic vs syntactic processing.', body: <ErpPanel /> },
-  { id: 'single-cell', title: 'Single-cell recording: orientation tuning', icon: <Crosshair className="h-4 w-4" />, blurb: 'Rotate a bar across a V1 receptive field and watch the firing rate follow the tuning curve.', body: <TuningCurve /> },
-  { id: 'rt', title: 'Mental chronometry mini-lab', icon: <Timer className="h-4 w-4" />, blurb: 'Measure your own reaction times: Donders’ subtraction method and Posner’s spatial cueing paradigm.', body: <RtLab /> },
+const SECTIONS: { id: string; title: string; icon: ReactNode; blurb: string; body: ReactNode; modules: string[] }[] = [
+  { id: 'compare', title: 'Compare methods', icon: <Radar className="h-4 w-4" />, blurb: 'Spatial vs temporal resolution, invasiveness, cost and causal inference — no single method wins on every axis.', body: <MethodsRadar />, modules: ['m1'] },
+  { id: 'in-3d', title: 'Methods on the 3D brain', icon: <Box className="h-4 w-4" />, blurb: 'fMRI contrasts, DTI tractography, TMS and DBS targets and classic lesion cases rendered on the MNI brain.', body: <Methods3D />, modules: ['m1'] },
+  { id: 'eeg', title: 'EEG: 10–20 system & rhythms', icon: <Waves className="h-4 w-4" />, blurb: 'Click an electrode to see the cortex beneath it; switch between oscillation bands and sleep stages.', body: <EegLab />, modules: ['m8'] },
+  { id: 'erp', title: 'ERPs: N400 & P600', icon: <Activity className="h-4 w-4" />, blurb: 'Averaged brain responses time-locked to a critical word reveal semantic vs syntactic processing.', body: <ErpPanel />, modules: ['m5'] },
+  { id: 'single-cell', title: 'Single-cell recording: orientation tuning', icon: <Crosshair className="h-4 w-4" />, blurb: 'Rotate a bar across a V1 receptive field and watch the firing rate follow the tuning curve.', body: <TuningCurve />, modules: ['m3'] },
+  { id: 'rt', title: 'Mental chronometry mini-lab', icon: <Timer className="h-4 w-4" />, blurb: 'Measure your own reaction times: Donders’ subtraction method and Posner’s spatial cueing paradigm.', body: <RtLab />, modules: ['m1', 'm4'] },
 ];
 
 export default function MethodsPage() {
@@ -35,6 +36,7 @@ export default function MethodsPage() {
             <h2 className="font-semibold flex items-center gap-2 text-lg"><span className="text-primary">{s.icon}</span>{s.title}</h2>
             <p className="text-sm text-muted-foreground">{s.blurb}</p>
           </div>
+          <SectionModuleLinks ids={s.modules} />
           <TryThis id={`methods:${s.id}`} />
           {s.body}
         </section>
