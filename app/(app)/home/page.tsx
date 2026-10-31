@@ -5,6 +5,7 @@ import { MODULES } from '@/lib/data/curriculum';
 import { ModuleTick } from '@/components/modules/module-progress';
 import ExamCountdowns from '@/components/exam-countdowns';
 import ContinueCard from './continue-card';
+import OnboardingTour from '@/components/onboarding-tour';
 
 export const dynamic = 'force-dynamic';
 
@@ -82,6 +83,9 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      <OnboardingTour />
     </div>
   );
 }
+
