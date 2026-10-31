@@ -10,7 +10,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { ALL_STRUCTURES, CORTICAL_AREAS, STRUCTURE_MAP, expandIds } from '@/lib/data/structures';
 import type { BrainStructure, Vec3 } from '@/lib/data/types';
-import { S, mni, glassMat, cortexMat, laplacianSmooth, buildNeuralTube, makeDotTexture, buildStreams, MAX_AREAS } from './viewer-helpers';
+import { S, mni, glassMat, cortexMat, laplacianSmooth, buildNeuralTube, makeDotTexture, buildStreams, buildBold, buildTract, MAX_AREAS } from './viewer-helpers';
 import type { StreamSpec } from './viewer-helpers';
 
 export { mni };
@@ -41,6 +41,10 @@ export interface ViewerProps {
   compact?: boolean;
   /** Animated particle streams (pathway stage polylines in MNI mm). */
   streams?: StreamSpec[];
+  /** BOLD-style activation clusters (illustrative fMRI paradigm). */
+  bold?: { color: string; clusters: { at: [number, number, number]; r: number }[] } | null;
+  /** DTI-style white-matter bundles (schematic polylines in MNI mm). */
+  dti?: { color: string; paths: [number, number, number][]; bilateral: boolean }[] | null;
   /** Fly the camera to a lateral view of the selected structure. Default true. */
   autoOrbit?: boolean;
   heightClass?: string;
@@ -83,7 +87,13 @@ export default function BrainViewer(props: ViewerProps) {
   const [meshState, setMeshState] = useState<'loading' | 'ready' | 'fallback'>('loading');
   const [progress, setProgress] = useState(0);
   const metaRef = useRef<{ areas: string[]; rh: Uint8Array | null; lh: Uint8Array | null } | null>(null);
+  const imagingApi = useRef<{
+    bold: { root: THREE.Group; cur: { group: THREE.Group; dispose: () => void; pulse: (t: number) => void } | null };
+    dti: { root: THREE.Group; cur: { group: THREE.Group; dispose: () => void } | null };
+  } | null>(null);
   const streamKey = JSON.stringify(props.streams ?? []);
+  const boldKey = props.bold ? JSON.stringify(props.bold) : '';
+  const dtiKey = props.dti ? JSON.stringify(props.dti) : '';
 
   useEffect(() => {
     const el = host.current;
@@ -174,6 +184,7 @@ export default function BrainViewer(props: ViewerProps) {
     root.add(grid);
     const tex = makeDotTexture();
     streamApi.current = { root, tex, cur: null };
+    imagingApi.current = { bold: { root, cur: null }, dti: { root, cur: null } };
     // starfield backdrop (outside the scaling root so the dev slider never distorts it)
     const starGeo = new THREE.BufferGeometry();
     {
@@ -323,6 +334,8 @@ export default function BrainViewer(props: ViewerProps) {
         morphDev = dev;
       }
       streamApi.current?.cur?.update(t);
+      const im = imagingApi.current;
+      if (im?.bold?.cur) im.bold.cur.pulse(t);
       // camera focus / fly-to
       const sel = pr?.selected ?? null;
       const c = sel ? centers.get(sel)?.clone().multiplyScalar(root.scale.x) : undefined;
@@ -366,6 +379,41 @@ export default function BrainViewer(props: ViewerProps) {
     const specs = JSON.parse(streamKey) as StreamSpec[];
     if (specs.length) { sa.cur = buildStreams(specs, sa.tex); sa.root.add(sa.cur.group); }
   }, [streamKey]);
+
+  useEffect(() => {
+    const im = imagingApi.current;
+    if (!im?.bold) return;
+    if (im.bold.cur) { im.bold.cur.dispose(); im.bold.cur = null; }
+    if (boldKey) {
+      const spec = JSON.parse(boldKey) as { color: string; clusters: { at: [number, number, number]; r: number }[] };
+      im.bold.cur = buildBold(spec.clusters, spec.color, true);
+      // overlays live on the brain root (so the dev slider scales them) but stay out of picking,
+      // which raycasts only explicit candidate lists (meshes + hemispheres)
+      im.bold.cur.group.traverse((o) => { o.renderOrder = 18; o.userData.__overlay = true; });
+      im.bold.root.add(im.bold.cur.group);
+    }
+    return () => { if (im.bold.cur) { im.bold.cur.dispose(); im.bold.cur = null; } };
+  }, [boldKey]);
+
+  useEffect(() => {
+    const im = imagingApi.current;
+    if (!im?.dti) return;
+    if (im.dti.cur) { im.dti.cur.dispose(); im.dti.cur = null; }
+    if (dtiKey) {
+      const specs = JSON.parse(dtiKey) as { color: string; paths: [number, number, number][]; bilateral: boolean }[];
+      const parent = new THREE.Group();
+      const parts: { dispose: () => void }[] = [];
+      specs.forEach((s) => {
+        const b = buildTract([s.paths], s.color, s.bilateral);
+        b.group.traverse((o) => { o.renderOrder = 15; o.userData.__overlay = true; });
+        parts.push(b);
+        parent.add(b.group);
+      });
+      im.dti.cur = { group: parent, dispose: () => parts.forEach((p) => p.dispose()) };
+      im.dti.root.add(parent);
+    }
+    return () => { if (im.dti.cur) { im.dti.cur.dispose(); im.dti.cur = null; } };
+  }, [dtiKey]);
 
   return (
     <div className="relative">

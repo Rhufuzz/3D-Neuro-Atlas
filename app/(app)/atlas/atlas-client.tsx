@@ -10,6 +10,7 @@ import { ATLAS_SECTIONS, structuresInSection, getStructure, formatMni } from '@/
 import type { GroupInfo } from '@/lib/data/structures';
 import { getCitation } from '@/lib/data/citations';
 import { PATHWAYS } from '@/lib/data/pathways';
+import { PARADIGMS, TRACTS } from '@/lib/data/imaging';
 import { devStageAt } from '@/lib/data/methods';
 import type { BrainStructure, Pathway, PathwayStage } from '@/lib/data/types';
 
@@ -24,11 +25,16 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
   const [selected, setSelected] = useState<string | null>(initial);
   const [pathway, setPathway] = useState<string>('');
   const [stage, setStage] = useState(0);
+  const [para, setPara] = useState<string>('');
+  const [dtiOn, setDtiOn] = useState(false);
   const s = getStructure(selected);
   const pw = PATHWAYS.find((p: Pathway) => p.id === pathway);
   const st: PathwayStage | undefined = pw?.stages?.[stage];
   const ds = devStageAt(dev);
   const streams = useMemo<StreamSpec[]>(() => (st && pw ? [{ paths: st.paths ?? [], color: st.color ?? pw.color, bilateral: st.bilateral }] : []), [st, pw]);
+  const pd = PARADIGMS.find((x) => x.id === para);
+  const bold = useMemo(() => (pd ? { color: pd.color, clusters: pd.clusters } : null), [pd]);
+  const dti = useMemo(() => (dtiOn ? TRACTS.map((t) => ({ color: t.color, paths: t.paths, bilateral: t.bilateral })) : null), [dtiOn]);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[260px_1fr_320px]">
@@ -47,7 +53,7 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
         ))}
       </aside>
       <section className="panel p-2 relative">
-        <BrainViewer opacity={opacity} showGrid={grid} showCsf={csf} showDeep dev={dev} selected={selected} highlight={st?.highlight ?? []} streams={streams} onSelect={setSelected} />
+        <BrainViewer opacity={opacity} showGrid={grid} showCsf={csf} showDeep dev={dev} selected={selected} highlight={st?.highlight ?? []} streams={streams} bold={bold} dti={dti} onSelect={setSelected} />
         <Link href="/micro" className="absolute right-3 top-3 glass-panel px-3 py-2 rounded-lg text-xs flex items-center gap-1.5 hover:text-primary"><Microscope className="h-3.5 w-3.5 text-primary" />Zoom to Micro-Scale</Link>
         <div className="absolute left-3 top-3 glass-panel p-3 rounded-lg space-y-2 text-xs w-60">
           <label className="block">X-ray cortical opacity: {opacity.toFixed(2)}<input aria-label="Cortical opacity" type="range" min={0.05} max={1} step={0.01} value={opacity} onChange={(e) => setOpacity(parseFloat(e.target.value))} className="range-neuro w-full" /></label>
@@ -55,6 +61,17 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
           <div className="flex gap-2">
             <button onClick={() => setGrid(!grid)} className={`flex items-center gap-1 px-2 py-1 rounded ${grid ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}><Grid3x3 className="h-3 w-3" />Grid</button>
             <button onClick={() => setCsf(!csf)} className={`flex items-center gap-1 px-2 py-1 rounded ${csf ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}><Droplets className="h-3 w-3" />CSF</button>
+          </div>
+          <div className="pt-1 border-t border-border/50 space-y-1.5">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">fMRI overlay (BOLD)</p>
+            <div className="flex flex-wrap gap-1">
+              <button onClick={() => setPara('')} className={`text-[11px] px-1.5 py-0.5 rounded ${!para ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/70'}`}>None</button>
+              {PARADIGMS.map((x) => (
+                <button key={x.id} onClick={() => setPara(x.id === para ? '' : x.id)} title={x.desc} className={`text-[11px] px-1.5 py-0.5 rounded ${para === x.id ? 'text-white' : 'bg-muted hover:bg-muted/70'}`} style={para === x.id ? { background: x.color } : undefined}>{x.name}</button>
+              ))}
+            </div>
+            <button onClick={() => setDtiOn(!dtiOn)} className={`text-[11px] px-2 py-0.5 rounded ${dtiOn ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/70'}`}>DTI bundles {dtiOn ? 'on' : 'off'}</button>
+            {(pd || dtiOn) && <p className="text-[10px] text-muted-foreground">{pd ? pd.desc : 'Five major white-matter bundles — schematic courses, not tractography.'} {pd && <span className="text-muted-foreground">(BOLD blobs are illustrative, not real data.)</span>}</p>}
           </div>
           {dev < 1 && <p className="text-muted-foreground">{ds?.text}</p>}
         </div>

@@ -143,6 +143,59 @@ export function makeDotTexture(): THREE.Texture {
 
 export interface StreamSpec { paths: Vec3[][]; color: string; bilateral?: boolean }
 
+/** DTI-style bundle: smooth tube along a CatmullRom spline through MNI control points. */
+export function buildTract(paths: Vec3[][], color: string, bilateral: boolean, radius = 0.045): { group: THREE.Group; dispose: () => void } {
+  const group = new THREE.Group();
+  const disposables: { dispose: () => void }[] = [];
+  const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false });
+  disposables.push(mat);
+  (bilateral ? [1, -1] : [1]).forEach((side: number) => {
+    paths.forEach((path: Vec3[]) => {
+      if ((path?.length ?? 0) < 2) return;
+      const curve = new THREE.CatmullRomCurve3(path.map((p: Vec3) => mni(p[0] * side, p[1], p[2])));
+      const geo = new THREE.TubeGeometry(curve, 96, radius, 8, false);
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.renderOrder = 15;
+      group.add(mesh);
+      disposables.push(geo);
+    });
+  });
+  return { group, dispose: () => disposables.forEach((d) => d.dispose()) };
+}
+
+/** Pulsing BOLD-style activation blobs at MNI coordinates (illustrative fMRI clusters). */
+export function buildBold(clusters: { at: Vec3; r: number }[], color: string, bilateral: boolean): { group: THREE.Group; dispose: () => void; pulse: (t: number) => void } {
+  const group = new THREE.Group();
+  const disposables: { dispose: () => void }[] = [];
+  const pulsers: { mesh: THREE.Mesh; phase: number }[] = [];
+  const base = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false });
+  const core = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
+  disposables.push(base, core);
+  clusters.forEach((c, i) => {
+    (bilateral ? [1, -1] : [1]).forEach((side: number) => {
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(c.r * S, 24, 18), base);
+      halo.position.copy(mni(c.at[0] * side, c.at[1], c.at[2]));
+      halo.renderOrder = 16;
+      group.add(halo);
+      disposables.push(halo.geometry);
+      const heart = new THREE.Mesh(new THREE.SphereGeometry(c.r * S * 0.45, 18, 12), core);
+      heart.position.copy(halo.position);
+      heart.renderOrder = 17;
+      group.add(heart);
+      disposables.push(heart.geometry);
+      pulsers.push({ mesh: heart, phase: i * 1.3 });
+    });
+  });
+  const pulse = (t: number) => {
+    pulsers.forEach((p) => {
+      const s = 1 + 0.28 * Math.sin(t * 2.4 + p.phase);
+      p.mesh.scale.setScalar(s);
+      (p.mesh.material as THREE.MeshBasicMaterial).opacity = 0.38 + 0.22 * (0.5 + 0.5 * Math.sin(t * 2.4 + p.phase));
+    });
+  };
+  return { group, dispose: () => disposables.forEach((d) => d.dispose()), pulse };
+}
+
 /** Animated particle streams along CatmullRom splines through MNI waypoints (action-potential volleys along a pathway). */
 export function buildStreams(specs: StreamSpec[], tex: THREE.Texture): { group: THREE.Group; update: (t: number) => void; dispose: () => void } {
   const group = new THREE.Group();
