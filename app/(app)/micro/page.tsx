@@ -9,6 +9,7 @@ import Conduction from './conduction';
 import CellExplorer from './cell-explorer';
 import SynapseSim from './synapse-sim';
 import LtpSteps from './ltp-steps';
+import TryThis from '@/components/try-this';
 
 const ZoomScene = dynamic(() => import('@/components/atlas/zoom-scene'), {
   ssr: false,
@@ -52,6 +53,7 @@ export default function MicroPage() {
             <h2 className="font-semibold flex items-center gap-2 text-lg"><span className="text-primary">{s.icon}</span>{s.title}</h2>
             <p className="text-sm text-muted-foreground">{s.blurb}</p>
           </div>
+          <TryThis id={`micro:${s.id}`} />
           {s.body}
         </section>
       ))}

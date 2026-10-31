@@ -6,6 +6,7 @@ import EegLab from './eeg-lab';
 import ErpPanel from './erp-panel';
 import TuningCurve from './tuning-curve';
 import RtLab from './rt-lab';
+import TryThis from '@/components/try-this';
 
 const SECTIONS: { id: string; title: string; icon: ReactNode; blurb: string; body: ReactNode }[] = [
   { id: 'compare', title: 'Compare methods', icon: <Radar className="h-4 w-4" />, blurb: 'Spatial vs temporal resolution, invasiveness, cost and causal inference — no single method wins on every axis.', body: <MethodsRadar /> },
@@ -34,6 +35,7 @@ export default function MethodsPage() {
             <h2 className="font-semibold flex items-center gap-2 text-lg"><span className="text-primary">{s.icon}</span>{s.title}</h2>
             <p className="text-sm text-muted-foreground">{s.blurb}</p>
           </div>
+          <TryThis id={`methods:${s.id}`} />
           {s.body}
         </section>
       ))}

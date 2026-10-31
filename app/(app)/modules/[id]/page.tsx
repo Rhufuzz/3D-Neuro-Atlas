@@ -11,6 +11,7 @@ import { LearnPath, GoalTracker } from '@/components/modules/learn-path';
 import ModuleDrill from '@/components/modules/module-drill';
 import { ModuleArcade } from '@/components/modules/module-games';
 import { ModuleXP } from '@/components/modules/module-xp';
+import TryThis from '@/components/try-this';
 
 export default async function ModulePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -47,6 +48,7 @@ export default async function ModulePage({ params }: { params: Promise<{ id: str
         ))}
       </section>
       <ModuleSim id={m.id} />
+      <TryThis id={`module:${m.id}`} />
       <ModuleDrill moduleId={m.id} weeks={m.weeks} />
       <ModuleArcade moduleId={m.id} pairs={pairs} structures={structures} questions={quizPool} />
       <section className="panel p-4 rounded-lg">
