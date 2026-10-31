@@ -5,6 +5,8 @@ import { auth } from '@/auth';
 import { MODULES } from '@/lib/data/curriculum';
 import ScopeToggle from '@/components/scope-toggle';
 import SignOutButton from './sign-out-button';
+import IosTopBar from '@/components/mobile/ios-top-bar';
+import IosTabBar from '@/components/mobile/ios-tab-bar';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,17 +43,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <SignOutButton />
         </div>
       </nav>
-      <div className="flex-1 min-w-0">
-        <header className="md:hidden glass-panel p-3 space-y-2 text-sm">
-          <div className="flex items-center justify-between gap-2">
-            <Link href="/home" className="font-bold glow-text">CORTEX-AETHER</Link>
-            <ScopeToggle compact />
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-1">
-            {LINKS.map((l) => <Link key={l.href} href={l.href} className="shrink-0 hover:text-primary">{l.short}</Link>)}
-          </div>
-        </header>
-        <main className="p-4 md:p-6 max-w-[1400px] mx-auto">{children}</main>
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
+        <IosTopBar />
+        <main className="flex-1 p-3.5 sm:p-5 md:p-6 max-w-[1400px] w-full mx-auto pb-28 md:pb-6">
+          {children}
+        </main>
+        <IosTabBar userEmail={session?.user?.email ?? ''} />
       </div>
     </div>
   );
