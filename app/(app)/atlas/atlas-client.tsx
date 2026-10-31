@@ -55,7 +55,7 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
         ))}
       </aside>
       <section className="panel p-2 relative">
-        <BrainViewer opacity={opacity} showGrid={grid} showCsf={csf} showDeep dev={dev} selected={selected} highlight={st?.highlight ?? []} streams={streams} bold={bold} dti={dti} onSelect={setSelected} />
+        <BrainViewer opacity={opacity} showGrid={grid} showCsf={csf} showDeep dev={dev} selected={selected} highlight={st?.highlight ?? []} streams={streams} bold={bold} dti={dti} onSelect={setSelected} paused={zoomOpen} />
         <button onClick={() => setZoomOpen(true)} className="absolute right-3 top-3 glass-panel px-3 py-2 rounded-lg text-xs flex items-center gap-1.5 hover:text-primary cursor-pointer"><Microscope className="h-3.5 w-3.5 text-primary" />Zoom to Micro-Scale</button>
         <div className="absolute left-3 top-3 glass-panel p-3 rounded-lg space-y-2 text-xs w-60">
           <label className="block">X-ray cortical opacity: {opacity.toFixed(2)}<input aria-label="Cortical opacity" type="range" min={0.05} max={1} step={0.01} value={opacity} onChange={(e) => setOpacity(parseFloat(e.target.value))} className="range-neuro w-full" /></label>

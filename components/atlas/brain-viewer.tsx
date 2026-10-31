@@ -48,6 +48,8 @@ export interface ViewerProps {
   /** Fly the camera to a lateral view of the selected structure. Default true. */
   autoOrbit?: boolean;
   heightClass?: string;
+  /** Skip rendering entirely (e.g. while the micro-zoom overlay owns the GPU). */
+  paused?: boolean;
 }
 
 function colorHemisphere(g: THREE.BufferGeometry, side: number, meta: { areas: string[]; rh: Uint8Array | null; lh: Uint8Array | null } | null): void {
@@ -99,7 +101,7 @@ export default function BrainViewer(props: ViewerProps) {
     const el = host.current;
     if (!el) return;
     let disposed = false;
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 2));
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -116,8 +118,12 @@ export default function BrainViewer(props: ViewerProps) {
     const stopAuto = () => { controls.autoRotate = false; renderer.domElement.removeEventListener('pointerdown', stopAuto); renderer.domElement.removeEventListener('wheel', stopAuto); };
     renderer.domElement.addEventListener('pointerdown', stopAuto);
     renderer.domElement.addEventListener('wheel', stopAuto, { passive: true });
-    const maxSamples = renderer.capabilities.maxSamples ?? 0;
-    const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(el.clientWidth, el.clientHeight, { type: THREE.HalfFloatType, samples: Math.min(4, maxSamples) }));
+    // allow automatic recovery if the GPU resets this context (prevents permanent black canvas)
+    const onCtxLost = (e: Event) => e.preventDefault();
+    renderer.domElement.addEventListener('webglcontextlost', onCtxLost, false);
+    // NOTE: plain EffectComposer target — a custom MSAA HalfFloat target caused intermittent
+    // black-frame flicker on some GPU drivers.
+    const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
     const bloom = new UnrealBloomPass(new THREE.Vector2(el.clientWidth, el.clientHeight), propsRef.current?.compact ? 0.35 : 0.55, 0.55, 0.6);
     composer.addPass(bloom);
@@ -295,6 +301,7 @@ export default function BrainViewer(props: ViewerProps) {
     const loop = () => {
       raf = requestAnimationFrame(loop);
       const t = clock.getElapsedTime(); const pr = propsRef.current;
+      if (pr?.paused) return;
       const hi = new Set<string>(expandIds([...(pr?.highlight ?? []), pr?.selected ?? '']));
       const dev = pr?.dev ?? 1;
       const adult = ss(0.6, 0.72, dev); const tubeA = 1 - ss(0.62, 0.72, dev);
@@ -361,6 +368,7 @@ export default function BrainViewer(props: ViewerProps) {
       window.removeEventListener('resize', onResize);
       renderer.domElement.removeEventListener('pointerdown', onDown);
       renderer.domElement.removeEventListener('pointerup', onUp);
+      renderer.domElement.removeEventListener('webglcontextlost', onCtxLost);
       streamApi.current?.cur?.dispose();
       streamApi.current = null;
       controls.dispose();
