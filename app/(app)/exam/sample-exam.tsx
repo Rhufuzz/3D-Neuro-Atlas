@@ -21,7 +21,18 @@ export default function SampleExam() {
 
   const start = (p: 'pre' | 'post' | 'all') => { setPart(p); setIdx(0); setAnswers([]); setReview(false); setReveal(false); setStarted(true); };
   const pick = (i: number) => setAnswers((a) => [...a.filter((x) => x.n !== q.n), { n: q.n, pick: i }]);
-  const next = () => { setReveal(false); if (idx + 1 >= pool.length) setReview(true); else setIdx(idx + 1); };
+  const finishExam = () => {
+    setReveal(false);
+    setReview(true);
+    if (answers.length > 0) {
+      fetch('/api/progress/sample-exam', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ part, answers }),
+      }).catch((e) => console.error('sample-exam save failed', e));
+    }
+  };
+  const next = () => { if (idx + 1 >= pool.length) finishExam(); else setIdx(idx + 1); };
   const score = pool.filter((qq) => answers.find((a) => a.n === qq.n)?.pick === qq.answer).length;
   const answered = pool.filter((qq) => answers.some((a) => a.n === qq.n)).length;
 
@@ -49,11 +60,31 @@ export default function SampleExam() {
 
   if (review) {
     const pct = Math.round((100 * score) / pool.length);
+    const prePool = pool.filter((x) => x.part === 'pre');
+    const postPool = pool.filter((x) => x.part === 'post');
+    const preScore = prePool.filter((qq) => answers.find((a) => a.n === qq.n)?.pick === qq.answer).length;
+    const postScore = postPool.filter((qq) => answers.find((a) => a.n === qq.n)?.pick === qq.answer).length;
+    const prePct = prePool.length > 0 ? Math.round((100 * preScore) / prePool.length) : null;
+    const postPct = postPool.length > 0 ? Math.round((100 * postScore) / postPool.length) : null;
     return (
       <section className="space-y-4" aria-labelledby="result-heading">
         <div className="panel rounded-lg p-5 space-y-3">
           <h2 id="result-heading" className="text-xl font-semibold">Result: {score} / {pool.length} ({pct}%)</h2>
           <div className="h-2 rounded-full bg-muted overflow-hidden"><div className="h-full bg-gradient-to-r from-primary to-cyan-300 rounded-full" style={{ width: `${pct}%` }} /></div>
+          {part === 'all' && prePct !== null && postPct !== null && (
+            <div className="grid grid-cols-2 gap-3 pt-1 text-xs">
+              <div className="panel p-2.5 rounded">
+                <p className="text-muted-foreground">Midterm material (Weeks 1–7)</p>
+                <p className="text-base font-bold tabular-nums text-primary mt-0.5">{preScore}/{prePool.length} ({prePct}%)</p>
+                <p className="text-[10px] text-muted-foreground">{prePct >= 55 ? '✓ Passing range for Part 1' : '⚠️ Focus on Weeks 1–7'}</p>
+              </div>
+              <div className="panel p-2.5 rounded">
+                <p className="text-muted-foreground">Post-midterm (Weeks 9–11)</p>
+                <p className="text-base font-bold tabular-nums text-primary mt-0.5">{postScore}/{postPool.length} ({postPct}%)</p>
+                <p className="text-[10px] text-muted-foreground">{postPct >= 55 ? '✓ Passing range for Part 2' : '⚠️ Review Modules 6–8'}</p>
+              </div>
+            </div>
+          )}
           <p className="text-sm text-muted-foreground">On the real exam 60 of these style questions count toward your grade; 5.5/10 (≈ 55%) is a pass per exam, and your midterm and final average decides the course grade.</p>
           <div className="flex gap-2">
             <button onClick={() => setStarted(false)} className="text-xs px-3 py-1.5 rounded-full bg-primary text-primary-foreground flex items-center gap-1.5"><RotateCcw className="h-3.5 w-3.5" />Back to overview</button>

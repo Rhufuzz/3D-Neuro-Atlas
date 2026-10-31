@@ -25,6 +25,7 @@ model User {
   learnSteps    LearnStepProgress[]
   goalTicks     GoalProgress[]
   customCards   UserFlashcard[]
+  sampleExams   SampleExamAttempt[]
 }
 
 model Account {
@@ -163,4 +164,18 @@ model UserFlashcard {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, dueAt])
+}
+
+// Attempts of the official 65-question sample exam (scored server-side from the key).
+model SampleExamAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  part      String
+  score     Int
+  total     Int
+  answers   Json
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
