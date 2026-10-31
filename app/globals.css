@@ -78,6 +78,8 @@
   body {
     overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
   }
 
   * {
@@ -176,11 +178,13 @@
 
   /* iOS native tactile feedback */
   .ios-touch {
-    transition: transform 0.12s ease, opacity 0.12s ease;
+    transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), opacity 0.12s ease;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .ios-touch:active {
-    transform: scale(0.97);
-    opacity: 0.85;
+    transform: scale(0.96);
+    opacity: 0.82;
   }
 
   /* iOS Frosted Glass Surface */
@@ -191,11 +195,39 @@
     border-color: rgba(255, 255, 255, 0.08);
   }
 
+  /* iOS 18 Floating Glass Tab Bar with specular highlight */
   .ios-glass-bar {
-    background-color: rgba(6, 9, 15, 0.82);
+    background: rgba(10, 14, 22, 0.72);
+    backdrop-filter: blur(32px) saturate(220%);
+    -webkit-backdrop-filter: blur(32px) saturate(220%);
+    border-top: 0.5px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  .ios-floating-pill {
+    background: rgba(14, 18, 28, 0.82);
     backdrop-filter: blur(28px) saturate(210%);
     -webkit-backdrop-filter: blur(28px) saturate(210%);
-    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    border: 0.5px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.55), inset 0 0.5px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* iOS Inset Grouped Table Cell styling */
+  .ios-cell {
+    position: relative;
+    transition: background-color 0.12s ease;
+  }
+  .ios-cell:active {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  .ios-cell + .ios-cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 56px;
+    right: 0;
+    height: 0.5px;
+    background-color: rgba(255, 255, 255, 0.08);
   }
   .scrollbar-none::-webkit-scrollbar { display: none; }
   .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }

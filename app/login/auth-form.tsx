@@ -29,8 +29,8 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         }
       }
       const res = await signIn('credentials', { email, password, redirect: false });
-      if (res?.error) setError('Invalid email or password');
-      else router.replace('/atlas');
+      if (res?.error) setError('Invalid email or password.');
+      else router.replace('/home');
     } catch (err) {
       console.error(err);
       setError('Something went wrong');
