@@ -5,8 +5,9 @@ An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cog
 
 > **Status: v0.2 — most of the spec is built.** Accounts, a WebGL atlas with real MNI152-derived meshes,
 > micro-scale and methods labs, 8 modules with interactive simulations, a mind-map, and saved spaced-repetition
-> study tools. Simulations are 2D teaching models with illustrative values. Remaining gaps (3D micro
-> zoom, BOLD/DTI rendering, CI, migrations, real TLS) are listed in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> study tools. Simulations are 2D teaching models with illustrative values. Remaining gaps (seamless
+> atlas→micro zoom morph, BOLD/DTI rendering with real datasets, true SSS, CSF flow) are listed in
+> [`docs/ROADMAP.md`](docs/ROADMAP.md).
 > AI agents: start with [`AGENTS.md`](AGENTS.md).
 
 ## What works today
@@ -14,7 +15,7 @@ An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cog
 | Area | State | Notes |
 |---|---|---|
 | Sign up / log in / log out | ✅ | Email + password (Auth.js v5 credentials, bcrypt, JWT sessions). All app pages require login. |
-| 3D Atlas (`/atlas`) | 🟡 | Three.js viewer: 66 structures; brain surface + subcortical nuclei are real meshes (MNI152 + Harvard-Oxford, `public/meshes/brain-v1.glb`), cortical areas are still ellipsoid markers. Cortex opacity, grid, CSF (ventricles + subarachnoid shell), neural-tube → adult development scrubber, 5 pathways with particle streams, `?s=<id>` deep links. No true SSS. |
+| 3D Atlas (`/atlas`) | 🟡 | Three.js viewer: 66 structures; brain surface + subcortical nuclei are real meshes (MNI152 + Harvard-Oxford, `public/meshes/brain-v1.glb`), and the surface carries the real Harvard-Oxford cortical parcellation baked per-vertex (small brainstem nuclei are still markers). Cortex opacity, grid, CSF (ventricles + subarachnoid shell), neural-tube → adult development scrubber, 5 pathways with particle streams, `?s=<id>` deep links. No true SSS. |
 | Micro-scale lab (`/micro`) | ✅ | 3D zoom-through-scales scene (brain → neuron → synapse → ion channel, scroll-driven), Hodgkin–Huxley AP simulator, conduction, neuron/glia explorer, synapse + drug simulator, LTP steps. |
 | Methods lab (`/methods`) | 🟡 | Radar comparison, EEG 10-20 + rhythms, ERPs (N400/P600), tuning curve, RT mini-lab (Donders, Posner), fMRI/DTI/TMS/DBS/lesion cards. No BOLD/DTI rendering. |
 | Curriculum modules (`/modules`, `/modules/m1..m8`) | ✅ | 8 modules with **guided learning paths** (step-by-step intuition → interactive practice), **tickable learning goals**, key concepts, saved "Mark complete", interactive simulations, and a **playful drill** (exam-style questions with instant feedback + flashcard round, attempt saved per user; e.g. basal-ganglia PD/HD/DBS model, VLPO flip-flop, aphasia classifier, DRM, IGT, sliding-filament sarcomere lab). |
@@ -59,9 +60,9 @@ cd /opt/cortex-aether && bash deploy/update.sh
 app/                 routes (App Router). (app)/ = logged-in area; login/, signup/, api/
 components/atlas/    brain-viewer.tsx — the Three.js scene
 lib/data/            ALL content: structures, pathways, curriculum, flashcards, quiz, citations, methods, concept graph
-lib/                 db.ts (Prisma client), store.ts (exam-scope store, not wired yet), utils.ts
+lib/                 db.ts (Prisma client), store.ts (exam-scope store), use-scope.ts, utils.ts
 prisma/schema.prisma database schema (users + progress tables)
-scripts/             seed.ts, auth-smoke.mjs
+scripts/             seed.ts, auth-smoke.mjs, build_meshes.py, check-dois.ts
 deploy/              VPS scripts, systemd unit, nginx site
 docs/                SPEC, ARCHITECTURE, ROADMAP, DEPLOYMENT_VPS
 ```

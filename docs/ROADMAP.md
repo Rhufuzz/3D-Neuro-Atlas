@@ -17,7 +17,9 @@ quantitative neuroscience models, unless stated otherwise.
 
 - 🟡 Tier 1 macro: 66 selectable structures at MNI coordinates with descriptions/functions/clinical notes/citations.
   Brain surface and subcortical nuclei are real meshes built from MNI152 + Harvard-Oxford (`scripts/build_meshes.py`
-  → `public/meshes/brain-v1.glb`); cortical areas and small brainstem nuclei are still ellipsoid markers.
+  → `public/meshes/brain-v1.glb`). The brain surface carries the real Harvard-Oxford cortical
+  parcellation baked per-vertex (colouring and picking follow true anatomy; seed Voronoi kept as
+  fallback); small brainstem nuclei are still markers.
 - 🟡 Muscle-fibre / sarcomere anatomy — 2D sliding-filament lab on `/modules/m4` (cross-bridge cycle,
   length–tension, twitch summation/tetanus); no 3D fibre model.
 - ✅ Meso pathways (visual, BG motor, language, semantic hub, sleep replay) with animated particle streams and
@@ -43,8 +45,10 @@ quantitative neuroscience models, unless stated otherwise.
 
 ## §5 Curriculum modules (Weeks 1–11)
 
-Each module page has goals/concepts/structures/readings, a **Mark complete** button (saved per user) and an
-"Interactive simulations" grid (`components/modules/*`). All are 2D SVG/HTML models.
+Each module page has guided learning paths (step-by-step intuition → interactive practice), tickable learning
+goals, key concepts/structures/readings, a **Mark complete** button (saved per user), an "Interactive
+simulations" grid (`components/modules/*`, all 2D SVG/HTML models), an exam-style drill with instant feedback,
+and the arcade games listed under §7.
 
 - ✅ M1 history timeline, levels of analysis; links to AP simulator and methods matrix.
 - ✅ M2 top-down context (B/13), agnosias (prosopagnosia, akinetopsia, …), Thatcher illusion, mental rotation.
@@ -60,10 +64,9 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 
 ## §6 Literature database
 
-- ✅ 92 citations (≥ 40 required) with `https://doi.org/` links, mapped to weeks/topics, cited from atlas, labs and
-  module simulations (citation chips).
-- ✅ Literature: 95 citations with DOI links, grouped by week. Scripted verification (`npm run
-  checkdois`): **0 dead DOIs** — 55 resolve, 40 sit behind publisher bot-walls (403, not dead).
+- ✅ 95 citations (≥ 40 required) with `https://doi.org/` links, mapped to weeks/topics, grouped by
+  week, cited from atlas, labs and module simulations (citation chips). Scripted verification
+  (`npm run checkdois`): **0 dead DOIs** — 55 resolve, 40 sit behind publisher bot-walls (403, not dead).
 
 ## §7 Study HUD
 
@@ -75,6 +78,9 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 - ✅ "Bigger picture" force-directed mind-map (`/mindmap`, 2D).
 - ✅ Flashcards with SM-2 scheduling saved per user; cards with a structure hide the label and highlight it in 3D.
 - ✅ Practice quiz with saved attempts, per-goal tracker and 3D focus on the relevant structure.
+- ✅ Module arcade on every module page: match game (term ↔ description), structure finder,
+  60-second sprint (misses reviewed after), and an XP meter (Rookie → Brainiac) fed by guided
+  steps, goals, drill and games.
 
 ## Platform / engineering
 
@@ -92,11 +98,11 @@ Each module page has goals/concepts/structures/readings, a **Mark complete** but
 ## Next candidates
 
 1. Seamless zoom from the atlas camera straight into the micro-scale scene (atlas overlay exists; a true single-camera morph is the next step).
-2. Prisma migrations and a real TLS certificate (needs a domain name; certbot is installed).
-3. BOLD/DTI overlays with real datasets (currently illustrative geometry).
-4. Atlas visual-quality pass — real cortical-area meshes (Harvard-Oxford cortical) + materials/lighting
-   overhaul to meet the owner's bar: as detailed as and more beautiful than
-   <https://neurotorium.org/tool/brain-atlas/> (see AGENTS.md).
+2. BOLD/DTI overlays with real datasets (currently illustrative geometry).
+3. Visual polish beyond the AAA pass — true subsurface scattering, CSF flow simulation; owner's bar:
+   as detailed as and more beautiful than <https://neurotorium.org/tool/brain-atlas/> (see AGENTS.md).
+4. Dedicated domain for the app itself (certbot is installed; LE cert currently reuses
+   `ptclab-backup.duckdns.org` and needs the owner's DNS/token).
 
 ## Done in the AAA pass (83a14f7)
 
