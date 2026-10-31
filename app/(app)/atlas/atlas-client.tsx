@@ -29,8 +29,10 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
   const [para, setPara] = useState<string>('');
   const [dtiOn, setDtiOn] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
-  const [noFx, setNoFx] = useState(false);
-  useEffect(() => { try { setNoFx(localStorage.getItem('cortex-no-fx') === '1'); } catch {} }, []);
+  // solid panels by default: backdrop-blur over an animating WebGL canvas makes Chrome
+  // composite tiles flicker black on some GPUs. Glass is opt-in via the toggle.
+  const [noFx, setNoFx] = useState(true);
+  useEffect(() => { try { const v = localStorage.getItem('cortex-no-fx'); if (v !== null) setNoFx(v === '1'); } catch {} }, []);
   const toggleFx = () => { try { localStorage.setItem('cortex-no-fx', !noFx ? '1' : '0'); } catch {} setNoFx(!noFx); };
   const s = getStructure(selected);
   const pw = PATHWAYS.find((p: Pathway) => p.id === pathway);
@@ -66,7 +68,7 @@ export default function AtlasClient({ initial = null }: { initial?: string | nul
           <div className="flex gap-2">
             <button onClick={() => setGrid(!grid)} className={`flex items-center gap-1 px-2 py-1 rounded ${grid ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}><Grid3x3 className="h-3 w-3" />Grid</button>
             <button onClick={() => setCsf(!csf)} className={`flex items-center gap-1 px-2 py-1 rounded ${csf ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}><Droplets className="h-3 w-3" />CSF</button>
-            <button onClick={toggleFx} title="Toggle blurred glass panels — turn off if you see flickering" className={`px-2 py-1 rounded ${noFx ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground'}`}>Glass</button>
+            <button onClick={toggleFx} title="Blurred glass panels — pretty, but can cause tile flicker on some GPUs" className={`px-2 py-1 rounded ${noFx ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground'}`}>{noFx ? 'Solid' : 'Glass'}</button>
           </div>
           <div className="pt-1 border-t border-border/50 space-y-1.5">
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">fMRI overlay (BOLD)</p>

@@ -101,8 +101,8 @@ export default function BrainViewer(props: ViewerProps) {
     const el = host.current;
     if (!el) return;
     let disposed = false;
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 2));
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 1.5));
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.12;
@@ -125,7 +125,8 @@ export default function BrainViewer(props: ViewerProps) {
     // black-frame flicker on some GPU drivers.
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    const bloom = new UnrealBloomPass(new THREE.Vector2(el.clientWidth, el.clientHeight), propsRef.current?.compact ? 0.35 : 0.55, 0.55, 0.6);
+    // half-resolution bloom: same glow, a quarter of the fill rate (flicker/pace friendly)
+    const bloom = new UnrealBloomPass(new THREE.Vector2(Math.max(320, el.clientWidth / 2), Math.max(240, el.clientHeight / 2)), propsRef.current?.compact ? 0.35 : 0.55, 0.55, 0.6);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
     const root = new THREE.Group();
@@ -425,7 +426,7 @@ export default function BrainViewer(props: ViewerProps) {
 
   return (
     <div className="relative">
-      <div ref={host} className={`w-full ${props.heightClass ?? (props.compact ? 'h-[300px]' : 'h-[60vh] md:h-[calc(100vh-8rem)]')} rounded-lg`} aria-label="Interactive 3D brain" />
+      <div ref={host} className={`webgl-host relative w-full ${props.heightClass ?? (props.compact ? 'h-[300px]' : 'h-[60vh] md:h-[calc(100vh-8rem)]')} rounded-lg`} aria-label="Interactive 3D brain" />
       <div className={`absolute inset-0 grid place-items-center bg-[#04060b] transition-opacity duration-700 ${meshState === 'loading' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="text-center space-y-3">
           <p className="glow-text text-lg font-semibold tracking-[0.3em]">CORTEX-AETHER</p>

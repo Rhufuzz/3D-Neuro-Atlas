@@ -264,8 +264,8 @@ export default function ZoomScene({ initialDepth = 0.06, fill = false }: { initi
     const el = host.current;
     if (!el) return;
     let disposed = false;
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 2));
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 1.5));
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
@@ -358,7 +358,7 @@ export default function ZoomScene({ initialDepth = 0.06, fill = false }: { initi
 
   return (
     <div className="space-y-3">
-      <div ref={host} className={`relative w-full ${fill ? 'h-full' : 'h-[420px]'} rounded-lg overflow-hidden`} aria-label="Zoom through neural scales">
+      <div ref={host} className={`webgl-host relative w-full ${fill ? 'h-full' : 'h-[420px]'} rounded-lg overflow-hidden`} aria-label="Zoom through neural scales">
         <div className="absolute left-3 top-3 glass-panel px-3 py-2 rounded-lg text-xs space-y-1">
           <p className="font-semibold text-primary">{band.name}</p>
           <p className="text-[11px] text-muted-foreground max-w-[260px]">{band.fact}</p>

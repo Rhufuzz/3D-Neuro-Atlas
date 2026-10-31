@@ -114,6 +114,12 @@
     -webkit-backdrop-filter: none !important;
     background: hsl(var(--card) / 0.94);
   }
+  /* pin each WebGL viewport to its own compositing layer: browser tiles above/around it
+     no longer get repainted (and black-flashed) by the animating canvas every frame */
+  .webgl-host {
+    transform: translateZ(0);
+    isolation: isolate;
+  }
   .panel {
     background: hsl(var(--card));
     box-shadow: var(--shadow-md);
