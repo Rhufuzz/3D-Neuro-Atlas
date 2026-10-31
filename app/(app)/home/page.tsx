@@ -5,6 +5,7 @@ import { MODULES } from '@/lib/data/curriculum';
 import { ModuleTick } from '@/components/modules/module-progress';
 import ExamCountdowns from '@/components/exam-countdowns';
 import ContinueCard from './continue-card';
+import ReadinessPanel from './readiness-panel';
 import OnboardingTour from '@/components/onboarding-tour';
 
 export const dynamic = 'force-dynamic';
@@ -37,6 +38,8 @@ export default async function HomePage() {
       </div>
 
       <ContinueCard />
+
+      <ReadinessPanel />
 
       <section className="space-y-3" aria-labelledby="countdown-heading">
         <h2 id="countdown-heading" className="text-lg font-semibold flex items-center gap-2"><GraduationCap className="h-5 w-5 text-primary" />Exam countdown</h2>
