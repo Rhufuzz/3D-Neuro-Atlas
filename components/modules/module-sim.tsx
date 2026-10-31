@@ -6,6 +6,8 @@ import { M3Illusions, M3Streams, M3Receptive, M4BasalGanglia, M4Neglect } from '
 import { M4Sarcomere } from './m4-sarcomere';
 import { M5Aphasia, M5WordSuperiority, M6Systems, M6Drm, M6Rpe, M6Context } from './m5-m6';
 import { M7Hpa, M7Reconsolidation, M7Igt, M8Hypnogram, M8FlipFlop, M8Clock, M8Disorders } from './m7-m8';
+import SimChallenge from './sim-challenge';
+import { CHALLENGES } from '@/lib/data/challenges';
 
 const SIMS: Record<string, ComponentType[]> = {
   m1: [M1History, M1Levels],
@@ -40,6 +42,9 @@ export default function ModuleSim({ id }: { id: string }) {
         )}
       </div>
       <div className="grid gap-4 lg:grid-cols-2">{list.map((C, i) => <C key={i} />)}</div>
+      {CHALLENGES[id] && (
+        <SimChallenge challenge={CHALLENGES[id].challenge} solutionHint={CHALLENGES[id].solutionHint} />
+      )}
     </section>
   );
 }
