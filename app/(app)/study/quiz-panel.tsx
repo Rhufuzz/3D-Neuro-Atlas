@@ -6,6 +6,7 @@ import { QUIZ } from '@/lib/data/quiz';
 import { STRUCTURE_MAP } from '@/lib/data/structures';
 import type { QuizQuestion } from '@/lib/data/types';
 import type { ExamScope } from '@/lib/store';
+import AddToDeckButton from '@/components/add-to-deck-button';
 
 type Mode = 'practice' | 'exam';
 const EXAM_LEN = 20;
@@ -107,6 +108,9 @@ export default function QuizPanel({ maxWeek, scope, onFocus, onSaved }: { maxWee
             })}
           </div>
           {reveal && <p className="text-sm text-muted-foreground">{q.explanation}</p>}
+          {reveal && pick !== undefined && pick !== q.answer && (
+            <AddToDeckButton front={q.question} back={`${q.options[q.answer]} — ${q.explanation}`} sourceKind="quiz" sourceRef={q.id} />
+          )}
           <div className="flex flex-wrap gap-2">
             <button disabled={qi === 0} onClick={() => setQi(qi - 1)} className="px-3 py-1.5 rounded-md bg-muted text-sm disabled:opacity-40">Back</button>
             <button disabled={qi >= qs.length - 1 || (mode === 'practice' && pick === undefined)} onClick={() => setQi(qi + 1)} className="px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm disabled:opacity-40">Next</button>

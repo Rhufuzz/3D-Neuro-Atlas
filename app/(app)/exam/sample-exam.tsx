@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { SAMPLE_EXAM, SAMPLE_PARTS } from '@/lib/data/sample-exam';
 import { CheckCircle2, XCircle, RotateCcw, ListChecks } from 'lucide-react';
+import AddToDeckButton from '@/components/add-to-deck-button';
 
 interface Answer { n: number; pick: number }
 
@@ -74,6 +75,9 @@ export default function SampleExam() {
                   ))}
                   {my === -1 && <p className="text-[11px] text-warning px-2">not answered</p>}
                 </div>
+                {!ok && (
+                  <AddToDeckButton front={qq.question} back={`${qq.options[qq.answer]} (correct answer)`} sourceKind="sample-exam" sourceRef={`q${qq.n}`} />
+                )}
               </div>
             );
           })}

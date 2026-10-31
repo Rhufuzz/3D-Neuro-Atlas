@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Swords, RotateCcw, Trophy, Flame } from 'lucide-react';
 import { QUIZ } from '@/lib/data/quiz';
 import { FLASHCARDS } from '@/lib/data/flashcards';
+import AddToDeckButton from '@/components/add-to-deck-button';
 
 interface Answer { qid: string; pick: number; correct: boolean }
 
@@ -98,6 +99,7 @@ export default function ModuleDrill({ moduleId, weeks }: { moduleId: string; wee
                 {picked === q.answer ? '✓ Correct!' : '✗ Not this one.'}
               </p>
               <p className="text-xs text-muted-foreground">{q.explanation}</p>
+              {picked !== q.answer && <AddToDeckButton front={q.question} back={`${q.options[q.answer]} — ${q.explanation}`} sourceKind="drill" sourceRef={q.id} />}
               <button onClick={next} className="text-xs px-3 py-1.5 rounded-full bg-primary text-primary-foreground">{idx + 1 >= pool.length ? 'To the flashcards →' : 'Next question'}</button>
             </div>
           )}

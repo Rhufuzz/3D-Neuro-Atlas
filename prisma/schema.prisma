@@ -24,6 +24,7 @@ model User {
   modules       ModuleProgress[]
   learnSteps    LearnStepProgress[]
   goalTicks     GoalProgress[]
+  customCards   UserFlashcard[]
 }
 
 model Account {
@@ -139,4 +140,27 @@ model GoalProgress {
 
   @@unique([userId, moduleId, goalIndex])
   @@index([userId])
+}
+
+// User-created cards (e.g. "add this exam question I missed to my deck"), with
+// their own SM-2 state — separate from the curated FLASHCARDS registry.
+model UserFlashcard {
+  id          String   @id @default(cuid())
+  userId      String
+  front       String   @db.Text
+  back        String   @db.Text
+  sourceKind  String   @default("manual")
+  sourceRef   String?
+  easeFactor  Float    @default(2.5)
+  interval    Int      @default(0)
+  repetitions Int      @default(0)
+  lapses      Int      @default(0)
+  reviews     Int      @default(0)
+  dueAt       DateTime @default(now())
+  lastGrade   Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, dueAt])
 }
