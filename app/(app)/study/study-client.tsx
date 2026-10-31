@@ -8,6 +8,7 @@ import { useScope } from '@/lib/use-scope';
 import FlashcardDeck from './flashcard-deck';
 import QuizPanel from './quiz-panel';
 import ProgressTracker from './progress-tracker';
+import MistakeDrill from './mistake-drill';
 
 const BrainViewer = dynamic(() => import('@/components/atlas/brain-viewer'), {
   ssr: false,
@@ -26,9 +27,12 @@ export default function StudyClient() {
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">Scope: <span className="text-primary">{scope === 'partial' ? 'Partial exam · Weeks 1–7' : 'Final exam · Weeks 1–11'}</span> (change it in the sidebar or header).</p>
       {hydrated ? (
-        <div className="grid gap-4 lg:grid-cols-2">
-          <FlashcardDeck maxWeek={maxWeek} onFocus={onFocus} />
-          <QuizPanel maxWeek={maxWeek} scope={scope} onFocus={onFocus} onSaved={onSaved} />
+        <div className="space-y-4">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <FlashcardDeck maxWeek={maxWeek} onFocus={onFocus} />
+            <QuizPanel maxWeek={maxWeek} scope={scope} onFocus={onFocus} onSaved={onSaved} />
+          </div>
+          <MistakeDrill />
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2"><div className="panel h-72 rounded-lg animate-pulse" /><div className="panel h-72 rounded-lg animate-pulse" /></div>
