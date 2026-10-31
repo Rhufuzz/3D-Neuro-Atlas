@@ -3,8 +3,11 @@ import { Target, Lightbulb, Brain, Library } from 'lucide-react';
 import { getModule } from '@/lib/data/curriculum';
 import { getStructure } from '@/lib/data/structures';
 import { getCitation } from '@/lib/data/citations';
+import { LEARN } from '@/lib/data/learn';
 import ModuleSim from '@/components/modules/module-sim';
 import ModuleCompleteButton from '@/components/modules/module-complete-button';
+import { LearnPath, GoalTracker } from '@/components/modules/learn-path';
+import ModuleDrill from '@/components/modules/module-drill';
 
 export default async function ModulePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -22,6 +25,8 @@ export default async function ModulePage({ params }: { params: Promise<{ id: str
         <h2 className="font-semibold flex items-center gap-2 mb-2"><Target className="h-4 w-4 text-primary" />Learning goals</h2>
         <ul className="list-disc pl-5 space-y-1 text-sm">{m.goals.map((g: string) => <li key={g}>{g}</li>)}</ul>
       </section>
+      {LEARN[m.id] && <LearnPath moduleId={m.id} steps={LEARN[m.id]} />}
+      <GoalTracker moduleId={m.id} goals={m.goals} />
       <section className="grid gap-3 md:grid-cols-2">
         {m.keyConcepts.map((k) => (
           <div key={k.term} className="panel p-4 rounded-lg">
@@ -31,6 +36,7 @@ export default async function ModulePage({ params }: { params: Promise<{ id: str
         ))}
       </section>
       <ModuleSim id={m.id} />
+      <ModuleDrill moduleId={m.id} weeks={m.weeks} />
       <section className="panel p-4 rounded-lg">
         <h2 className="font-semibold flex items-center gap-2 mb-2"><Brain className="h-4 w-4 text-primary" />Key structures</h2>
         <div className="flex flex-wrap gap-2">{m.structures.map((s: string) => <span key={s} className="text-xs bg-muted px-2 py-1 rounded">{getStructure(s)?.name ?? s}</span>)}</div>
