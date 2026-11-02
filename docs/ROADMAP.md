@@ -108,6 +108,9 @@ and the arcade games listed under §7.
 ## Platform / engineering
 
 - ✅ Auth (sign up, log in, log out, protected routes).
+- ✅ Mobile-first iOS shell: native-style bottom tab bar (Home/Atlas/Modules/Study/More) with iOS action
+  sheet for labs/exam tools, safe-area insets (notch + home indicator), SF Pro system font, tactile press
+  states, scroll-aware top bar with back buttons, and viewer-first atlas layout with selection bottom-card.
 - ✅ API routes `/api/progress/{flashcards,quiz,modules}` (401 when signed out).
 - ✅ VPS deployment scripts (systemd + nginx + PostgreSQL), update script.
 - ✅ Automated tests: node:test suites for `lib/sm2.ts` and `lib/force-layout.ts` (`npm test`);

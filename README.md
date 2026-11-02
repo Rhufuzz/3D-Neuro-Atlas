@@ -15,6 +15,7 @@ An interactive 3D neuro-atlas and study engine for an 11-week **Biological & Cog
 | Area | State | Notes |
 |---|---|---|
 | Home dashboard (`/home`) | ✅ | Post-login landing: continue-where-you-left-off, exam countdowns, how-to-use guide, module grid, exam-readiness estimate, cards-due counter, first-visit onboarding tour. |
+| Mobile (iOS-first) | ✅ | Native-style bottom tab bar (Home / Atlas / Modules / Study / More) with iOS action sheet, safe-area insets for notch + home indicator, SF Pro system font, tactile press states, and a viewer-first atlas layout with a selection bottom-card. |
 | Sign up / log in / log out | ✅ | Email + password (Auth.js v5 credentials, bcrypt, JWT sessions). All app pages require login. |
 | 3D Atlas (`/atlas`) | 🟡 | Three.js viewer: 66 structures; brain surface + subcortical nuclei are real meshes (MNI152 + Harvard-Oxford, `public/meshes/brain-v1.glb`), and the surface carries the real Harvard-Oxford cortical parcellation baked per-vertex (small brainstem nuclei are still markers). Cortex opacity, grid, CSF (ventricles + subarachnoid shell), neural-tube → adult development scrubber, 5 pathways with particle streams, `?s=<id>` deep links. No true SSS. |
 | Micro-scale lab (`/micro`) | ✅ | 3D zoom-through-scales scene (brain → neuron → synapse → ion channel, scroll-driven), Hodgkin–Huxley AP simulator, conduction, neuron/glia explorer, synapse + drug simulator, LTP steps. Every section has Try-this guidance and a back-link to its module. |
@@ -60,10 +61,11 @@ cd /opt/cortex-aether && bash deploy/update.sh
 ```
 app/                 routes (App Router). (app)/ = logged-in area; login/, signup/, api/
 components/atlas/    brain-viewer.tsx — the Three.js scene
-lib/data/            ALL content: structures, pathways, curriculum, flashcards, quiz, citations, methods, concept graph
+components/mobile/   iOS tab bar, top bar and More action sheet (mobile-first shell)
+lib/data/            ALL content: structures, pathways, curriculum, flashcards, quiz, citations, methods, concept graph, try-this, challenges
 lib/                 db.ts (Prisma client), store.ts (exam-scope store), use-scope.ts, utils.ts
 prisma/schema.prisma database schema (users + progress tables)
-scripts/             seed.ts, auth-smoke.mjs, build_meshes.py, check-dois.ts
+scripts/             seed.ts, auth-smoke.mjs, build_meshes.py, check-dois.ts, backup.sh
 deploy/              VPS scripts, systemd unit, nginx site
 docs/                SPEC, ARCHITECTURE, ROADMAP, DEPLOYMENT_VPS
 ```
