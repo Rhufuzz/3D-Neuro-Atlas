@@ -50,7 +50,9 @@ npm run build
 AUTH_SMOKE_BASE=http://localhost:3000 npm run smoke   # with `npm run dev` running; prints AUTH SMOKE: PASS
 ```
 
-There are no unit tests yet. For UI work, log in at `/signup` and click through the affected page.
+There are node:test unit suites for `lib/sm2.ts` and `lib/force-layout.ts` (`npm test`, glob form:
+`node --import tsx --test 'tests/*.test.ts'`) plus GitHub Actions CI (typecheck → tests → build, DOI
+report). For UI work, log in at `/signup` and click through the affected page.
 
 ## Where to add things
 
@@ -64,7 +66,8 @@ There are no unit tests yet. For UI work, log in at `/signup` and click through 
 | Citations in a UI panel | `components/cite-chips.tsx` with citation ids from `lib/data/citations.ts` |
 | Mind-map (§7.2) | `app/(app)/mindmap/*` + `lib/force-layout.ts` |
 | Exam scope (§7.1) | `lib/use-scope.ts`, `components/scope-toggle.tsx`, `components/scope-gate.tsx` |
-| Saved progress (§7.3) | `app/api/progress/{flashcards,quiz,modules}` + `lib/sm2.ts` |
+| Saved progress (§7.3) | `app/api/progress/{flashcards,quiz,modules,learn,goals,custom-cards,sample-exam,elaborations,readiness}` + `lib/sm2.ts` |
+| Mobile shell (iOS tab bar, top bar, More sheet) | `components/mobile/*`; safe-area utilities + iOS glass classes in `app/globals.css` |
 | Anatomical meshes | `scripts/build_meshes.py` (Python: nibabel, nilearn, scikit-image, trimesh) → `public/meshes/brain-v1.glb` |
 
 ## Deployment
